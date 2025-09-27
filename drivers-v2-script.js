@@ -11,24 +11,28 @@ let currentTab = 'today';
 let currentFilter = 'all';
 
 function initializeDriverPortal() {
+    console.log('Initializing driver portal...');
     loadBookings();
     setupEventListeners();
-    updateDateTime();
-    setInterval(updateDateTime, 60000);
+    console.log('Driver portal initialized. Total bookings:', allBookings.length);
+
+    // Force show all data for debugging
+    setTimeout(() => {
+        if (filteredBookings.length === 0) {
+            console.log('No filtered bookings, forcing display of all bookings');
+            filteredBookings = allBookings.slice(0, 10); // Show first 10 bookings
+            displayBookings();
+        }
+    }, 1000);
 }
 
 function loadBookings() {
-    // Load from localStorage or create sample data
-    const storedBookings = localStorage.getItem('kit-bookings');
+    // Force clear old data and create fresh sample data
+    localStorage.removeItem('kit-bookings');
 
-    if (storedBookings) {
-        allBookings = JSON.parse(storedBookings);
-    }
-
-    // If no bookings, create sample data matching the screenshot
-    if (!allBookings || allBookings.length === 0) {
-        createRealisticSampleData();
-    }
+    console.log('Creating fresh sample data...');
+    createRealisticSampleData();
+    console.log('Sample data created:', allBookings.length, 'bookings');
 
     // Apply initial filter
     applyFilters();
@@ -42,7 +46,7 @@ function createRealisticSampleData() {
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
     allBookings = [
-        // Today's bookings (matching screenshot format)
+        // Exact bookings from Knack screenshot - 27/09/2025
         {
             pnr: '7561',
             date: todayStr,
@@ -64,7 +68,7 @@ function createRealisticSampleData() {
             paymentStatus: 'on-account',
             price: 57.50,
             rateType: 'nett',
-            customerName: 'Mrs Katharine NICOL',
+            customerName: 'NICOL, Mrs Katharine',
             source: 'manual'
         },
         {
@@ -88,7 +92,7 @@ function createRealisticSampleData() {
             paymentStatus: 'on-account',
             price: 79.20,
             rateType: 'nett',
-            customerName: 'Mr Stephen NICOL',
+            customerName: 'NICOL, Mr Stephen',
             source: 'manual'
         },
         {
@@ -97,8 +101,8 @@ function createRealisticSampleData() {
             departDate: todayStr,
             time: '10:20',
             departTime: '10:20',
-            firstName: 'Chapman',
-            lastName: 'Pitout',
+            firstName: 'Pitout',
+            lastName: '',
             title: '',
             phone: '0423456789',
             pickupLocation: 'Ozone Hotel & Apartments',
@@ -106,7 +110,7 @@ function createRealisticSampleData() {
             passengers: 19,
             driver: 'gary-bell',
             driverSecondary: 'shawn-olsen',
-            vehicle: 'Merc 228 (2) + Toyota 1063 (3)',
+            vehicle: 'Merc 228 (2), Toyota 1063 (3)',
             agent: 'Sealink',
             status: 'confirmed',
             complete: 'yes',
@@ -122,8 +126,8 @@ function createRealisticSampleData() {
             departDate: todayStr,
             time: '12:00',
             departTime: '12:00',
-            firstName: 'Dr',
-            lastName: 'Payne',
+            firstName: 'Payne',
+            lastName: '',
             phone: '0434567890',
             pickupLocation: 'Airport',
             dropoffLocation: 'Ozone Hotel & Apartments',
@@ -135,7 +139,7 @@ function createRealisticSampleData() {
             paymentStatus: 'pay-on-day',
             price: 36.00,
             rateType: 'RRP',
-            customerName: 'Dr Payne',
+            customerName: 'Dr Payne x 1',
             source: 'manual'
         },
         {
@@ -157,54 +161,631 @@ function createRealisticSampleData() {
             paymentStatus: 'pay-on-day',
             price: 36.00,
             rateType: 'RRP',
-            customerName: 'Bremner',
+            customerName: 'Bremner x 1',
             source: 'manual'
         },
-        // Unassigned booking
+        {
+            pnr: '8497',
+            date: todayStr,
+            departDate: todayStr,
+            time: '12:15',
+            departTime: '12:15',
+            firstName: 'Elna',
+            lastName: '',
+            phone: '0456789012',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Ozone',
+            passengers: 6,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 152.00,
+            rateType: 'RRP',
+            customerName: 'Elna x 6',
+            source: 'manual'
+        },
         {
             pnr: '8502',
             date: todayStr,
             departDate: todayStr,
-            time: '14:30',
-            departTime: '14:30',
-            firstName: 'John',
-            lastName: 'Smith',
-            phone: '0456789012',
-            pickupLocation: 'Penneshaw Ferry',
-            dropoffLocation: 'American River',
-            passengers: 3,
-            driver: null,
-            vehicle: null,
-            status: 'pending',
+            time: '12:30',
+            departTime: '12:30',
+            firstName: 'Marrello',
+            lastName: '',
+            phone: '0467890123',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Ozone Hotel & Apartments',
+            passengers: 1,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            status: 'confirmed',
             complete: 'no',
-            paymentStatus: 'pending',
-            price: 85.00,
+            paymentStatus: 'pay-on-day',
+            price: 36.00,
             rateType: 'RRP',
-            customerName: 'John Smith',
-            source: 'online'
+            customerName: 'Marrello x 1',
+            source: 'manual'
         },
-        // Tomorrow's bookings
         {
             pnr: '8503',
-            date: tomorrowStr,
-            departDate: tomorrowStr,
-            time: '08:00',
-            departTime: '08:00',
-            firstName: 'Lisa',
-            lastName: 'Taylor',
-            phone: '0467890123',
-            pickupLocation: 'Kingscote Town',
-            dropoffLocation: 'Airport',
+            date: todayStr,
+            departDate: todayStr,
+            time: '12:30',
+            departTime: '12:30',
+            firstName: 'Redlick',
+            lastName: '',
+            phone: '0478901234',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Ozone Hotel & Apartments',
             passengers: 2,
             driver: 'gary-bell',
             vehicle: 'Toyota 1063 (3)',
             status: 'confirmed',
             complete: 'no',
-            paymentStatus: 'on-account',
-            price: 45.00,
-            rateType: 'nett',
-            customerName: 'Lisa Taylor',
+            paymentStatus: 'pay-on-day',
+            price: 72.00,
+            rateType: 'RRP',
+            customerName: 'Redlick x 2',
             source: 'manual'
+        },
+        {
+            pnr: '8504',
+            date: todayStr,
+            departDate: todayStr,
+            time: '12:30',
+            departTime: '12:30',
+            firstName: 'Janice',
+            lastName: 'Dianne',
+            phone: '0489012345',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Ozone Hotel & Apartments',
+            passengers: 2,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 72.00,
+            rateType: 'RRP',
+            customerName: 'Janice & Dianne',
+            source: 'manual'
+        },
+        {
+            pnr: '8505',
+            date: todayStr,
+            departDate: todayStr,
+            time: '12:30',
+            departTime: '12:30',
+            firstName: 'Adriano',
+            lastName: 'Fasoli',
+            phone: '0490123456',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Ozone Hotel & Apartments',
+            passengers: 2,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 72.00,
+            rateType: 'RRP',
+            customerName: 'Adriano Fasoli x 2',
+            source: 'manual'
+        },
+        // Additional transfers to reach 25-30 per day
+        {
+            pnr: '8506',
+            date: todayStr,
+            departDate: todayStr,
+            time: '13:00',
+            departTime: '13:00',
+            firstName: 'Williams',
+            lastName: 'Family',
+            phone: '0412345600',
+            pickupLocation: 'Mercure KI Lodge (KIL)',
+            dropoffLocation: 'Remarkable Rocks',
+            passengers: 4,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'Mercure Kangaroo Island Lodge (KIL)',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 180.00,
+            rateType: 'fixed',
+            customerName: 'Williams Family x 4',
+            source: 'online'
+        },
+        {
+            pnr: '8507',
+            date: todayStr,
+            departDate: todayStr,
+            time: '13:30',
+            departTime: '13:30',
+            firstName: 'Johnson',
+            lastName: 'Mary',
+            phone: '0412345601',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Lighthouse Suite',
+            passengers: 2,
+            driver: '',
+            vehicle: '',
+            agent: 'Direct Booking',
+            status: 'pending',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 45.00,
+            rateType: 'RRP',
+            customerName: 'Johnson, Mary x 2',
+            source: 'phone'
+        },
+        {
+            pnr: '8508',
+            date: todayStr,
+            departDate: todayStr,
+            time: '14:00',
+            departTime: '14:00',
+            firstName: 'Thompson',
+            lastName: 'Group',
+            phone: '0412345602',
+            pickupLocation: 'Penneshaw Wharf',
+            dropoffLocation: 'Kangaroo Island Wilderness Retreat',
+            passengers: 8,
+            driver: 'gary-bell',
+            driverSecondary: 'shawn-olsen',
+            vehicle: 'Toyota 1063 (3), Merc 228 (2)',
+            agent: 'SeaLink Travel Group',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 320.00,
+            rateType: 'group',
+            customerName: 'Thompson Group x 8',
+            source: 'agent'
+        },
+        {
+            pnr: '8509',
+            date: todayStr,
+            departDate: todayStr,
+            time: '14:30',
+            departTime: '14:30',
+            firstName: 'Anderson',
+            lastName: 'Peter',
+            phone: '0412345603',
+            pickupLocation: 'Ozone Hotel & Apartments',
+            dropoffLocation: 'Flinders Chase National Park',
+            passengers: 3,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'Booking.com',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 165.00,
+            rateType: 'private',
+            customerName: 'Anderson, Peter x 3',
+            source: 'online'
+        },
+        {
+            pnr: '8510',
+            date: todayStr,
+            departDate: todayStr,
+            time: '15:00',
+            departTime: '15:00',
+            firstName: 'Davis',
+            lastName: 'Susan',
+            phone: '0412345604',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Kingscote',
+            passengers: 1,
+            driver: '',
+            vehicle: '',
+            agent: 'Direct Booking',
+            status: 'pending',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 28.00,
+            rateType: 'RRP',
+            customerName: 'Davis, Susan',
+            source: 'online'
+        },
+        {
+            pnr: '8511',
+            date: todayStr,
+            departDate: todayStr,
+            time: '15:30',
+            departTime: '15:30',
+            firstName: 'Brown',
+            lastName: 'Family',
+            phone: '0412345605',
+            pickupLocation: 'Lighthouse Suite',
+            dropoffLocation: 'Seal Bay Conservation Park',
+            passengers: 5,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Expedia Group',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 195.00,
+            rateType: 'fixed',
+            customerName: 'Brown Family x 5',
+            source: 'phone'
+        },
+        {
+            pnr: '8512',
+            date: todayStr,
+            departDate: todayStr,
+            time: '16:00',
+            departTime: '16:00',
+            firstName: 'Wilson',
+            lastName: 'Robert',
+            phone: '0412345606',
+            pickupLocation: 'Kangaroo Island Wilderness Retreat',
+            dropoffLocation: 'Airport',
+            passengers: 2,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'Wilderness Retreat Direct',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 89.00,
+            rateType: 'private',
+            customerName: 'Wilson, Robert x 2',
+            source: 'agent'
+        },
+        {
+            pnr: '8513',
+            date: todayStr,
+            departDate: todayStr,
+            time: '17:00',
+            departTime: '17:00',
+            firstName: 'Miller',
+            lastName: 'Group',
+            phone: '0412345607',
+            pickupLocation: 'Remarkable Rocks',
+            dropoffLocation: 'Penneshaw Wharf',
+            passengers: 6,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Adventure Tours Australia',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 240.00,
+            rateType: 'group',
+            customerName: 'Miller Group x 6',
+            source: 'online'
+        },
+        {
+            pnr: '8514',
+            date: todayStr,
+            departDate: todayStr,
+            time: '17:30',
+            departTime: '17:30',
+            firstName: 'Taylor',
+            lastName: 'Jennifer',
+            phone: '0412345608',
+            pickupLocation: 'Seal Bay Conservation Park',
+            dropoffLocation: 'Ozone Hotel & Apartments',
+            passengers: 3,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'TripAdvisor',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 125.00,
+            rateType: 'fixed',
+            customerName: 'Taylor, Jennifer x 3',
+            source: 'phone'
+        },
+        {
+            pnr: '8515',
+            date: todayStr,
+            departDate: todayStr,
+            time: '18:00',
+            departTime: '18:00',
+            firstName: 'Moore',
+            lastName: 'David',
+            phone: '0412345609',
+            pickupLocation: 'Flinders Chase National Park',
+            dropoffLocation: 'Airport',
+            passengers: 4,
+            driver: '',
+            vehicle: '',
+            agent: 'GetYourGuide',
+            status: 'pending',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 180.00,
+            rateType: 'private',
+            customerName: 'Moore, David x 4',
+            source: 'online'
+        },
+        {
+            pnr: '8516',
+            date: todayStr,
+            departDate: todayStr,
+            time: '18:30',
+            departTime: '18:30',
+            firstName: 'Jackson',
+            lastName: 'Lisa',
+            phone: '0412345610',
+            pickupLocation: 'Kingscote',
+            dropoffLocation: 'Airport',
+            passengers: 1,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Direct Booking',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 28.00,
+            rateType: 'RRP',
+            customerName: 'Jackson, Lisa',
+            source: 'phone'
+        },
+        {
+            pnr: '8517',
+            date: todayStr,
+            departDate: todayStr,
+            time: '19:00',
+            departTime: '19:00',
+            firstName: 'White',
+            lastName: 'Family',
+            phone: '0412345611',
+            pickupLocation: 'Kangaroo Island Wilderness Retreat',
+            dropoffLocation: 'Penneshaw Wharf',
+            passengers: 7,
+            driver: 'shawn-olsen',
+            driverSecondary: 'gary-bell',
+            vehicle: 'Merc 228 (2), Toyota 1063 (3)',
+            agent: 'Wilderness Retreat Direct',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 295.00,
+            rateType: 'group',
+            customerName: 'White Family x 7',
+            source: 'agent'
+        },
+        {
+            pnr: '8518',
+            date: todayStr,
+            departDate: todayStr,
+            time: '19:30',
+            departTime: '19:30',
+            firstName: 'Harris',
+            lastName: 'Michael',
+            phone: '0412345612',
+            pickupLocation: 'Ozone Hotel & Apartments',
+            dropoffLocation: 'Airport',
+            passengers: 2,
+            driver: '',
+            vehicle: '',
+            agent: 'Airbnb Experience',
+            status: 'pending',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 72.00,
+            rateType: 'RRP',
+            customerName: 'Harris, Michael x 2',
+            source: 'online'
+        },
+        {
+            pnr: '8519',
+            date: todayStr,
+            departDate: todayStr,
+            time: '20:00',
+            departTime: '20:00',
+            firstName: 'Clark',
+            lastName: 'Sarah',
+            phone: '0412345613',
+            pickupLocation: 'Lighthouse Suite',
+            dropoffLocation: 'Airport',
+            passengers: 1,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Lighthouse Suite Direct',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 45.00,
+            rateType: 'private',
+            customerName: 'Clark, Sarah',
+            source: 'phone'
+        },
+        // Tomorrow's bookings
+        {
+            pnr: '8520',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '07:00',
+            departTime: '07:00',
+            firstName: 'Lewis',
+            lastName: 'Mark',
+            phone: '0412345614',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Southern Ocean Lodge',
+            passengers: 2,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Southern Ocean Lodge',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 520.00,
+            rateType: 'luxury',
+            customerName: 'Lewis, Mark x 2',
+            source: 'agent'
+        },
+        {
+            pnr: '8521',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '08:30',
+            departTime: '08:30',
+            firstName: 'Walker',
+            lastName: 'Family',
+            phone: '0412345615',
+            pickupLocation: 'Penneshaw Wharf',
+            dropoffLocation: 'Flinders Chase National Park',
+            passengers: 5,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'SeaLink Travel Group',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 225.00,
+            rateType: 'group',
+            customerName: 'Walker Family x 5',
+            source: 'online'
+        },
+        {
+            pnr: '8522',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '10:00',
+            departTime: '10:00',
+            firstName: 'Hall',
+            lastName: 'Emma',
+            phone: '0412345616',
+            pickupLocation: 'Ozone Hotel & Apartments',
+            dropoffLocation: 'Remarkable Rocks',
+            passengers: 3,
+            driver: '',
+            vehicle: '',
+            agent: 'Viator',
+            status: 'pending',
+            complete: 'no',
+            paymentStatus: 'pay-on-day',
+            price: 135.00,
+            rateType: 'fixed',
+            customerName: 'Hall, Emma x 3',
+            source: 'phone'
+        },
+        {
+            pnr: '8523',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '11:30',
+            departTime: '11:30',
+            firstName: 'Young',
+            lastName: 'Group',
+            phone: '0412345617',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Kangaroo Island Wilderness Retreat',
+            passengers: 9,
+            driver: 'gary-bell',
+            driverSecondary: 'shawn-olsen',
+            vehicle: 'Toyota 1063 (3), Merc 228 (2)',
+            agent: 'Wilderness Retreat Direct',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 380.00,
+            rateType: 'group',
+            customerName: 'Young Group x 9',
+            source: 'agent'
+        },
+        {
+            pnr: '4772',
+            date: todayStr,
+            departDate: todayStr,
+            time: '16:30',
+            departTime: '16:30',
+            firstName: 'Bankston',
+            lastName: '',
+            phone: '0401234567',
+            pickupLocation: 'Southern Ocean Lodge',
+            dropoffLocation: 'Penneshaw Wharf',
+            passengers: 2,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'ATS Pacific Pty Ltd',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 502.20,
+            rateType: 'private',
+            customerName: 'Bankston x 2',
+            source: 'manual'
+        },
+        // Additional evening transfers
+        {
+            pnr: '8520',
+            date: todayStr,
+            departDate: todayStr,
+            time: '20:00',
+            departTime: '20:00',
+            firstName: 'Clark',
+            lastName: 'Sarah',
+            phone: '0412345613',
+            pickupLocation: 'Lighthouse Suite',
+            dropoffLocation: 'Airport',
+            passengers: 1,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Lighthouse Suite Direct',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 45.00,
+            rateType: 'private',
+            customerName: 'Clark, Sarah',
+            source: 'phone'
+        },
+        // Tomorrow's bookings
+        {
+            pnr: '8530',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '07:00',
+            departTime: '07:00',
+            firstName: 'Lewis',
+            lastName: 'Mark',
+            phone: '0412345614',
+            pickupLocation: 'Airport',
+            dropoffLocation: 'Southern Ocean Lodge',
+            passengers: 2,
+            driver: 'gary-bell',
+            vehicle: 'Toyota 1063 (3)',
+            agent: 'Southern Ocean Lodge',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'on-account',
+            price: 520.00,
+            rateType: 'luxury',
+            customerName: 'Lewis, Mark x 2',
+            source: 'agent'
+        },
+        {
+            pnr: '8531',
+            date: tomorrowStr,
+            departDate: tomorrowStr,
+            time: '08:30',
+            departTime: '08:30',
+            firstName: 'Walker',
+            lastName: 'Family',
+            phone: '0412345615',
+            pickupLocation: 'Penneshaw Wharf',
+            dropoffLocation: 'Flinders Chase National Park',
+            passengers: 5,
+            driver: 'shawn-olsen',
+            vehicle: 'Merc 228 (2)',
+            agent: 'SeaLink Travel Group',
+            status: 'confirmed',
+            complete: 'no',
+            paymentStatus: 'paid',
+            price: 225.00,
+            rateType: 'group',
+            customerName: 'Walker Family x 5',
+            source: 'online'
         }
     ];
 
@@ -220,6 +801,37 @@ function createRealisticSampleData() {
 }
 
 function setupEventListeners() {
+    // Auto-hide header in landscape mode
+    let lastScrollTop = 0;
+    let scrollTimeout;
+
+    window.addEventListener('scroll', function() {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const header = document.querySelector('.app-header');
+
+        // Only apply in landscape mode with limited height
+        if (window.matchMedia('(orientation: landscape) and (max-height: 600px)').matches) {
+            if (currentScroll > lastScrollTop && currentScroll > 50) {
+                // Scrolling down - hide header
+                header.classList.add('hidden');
+            } else {
+                // Scrolling up - show header
+                header.classList.remove('hidden');
+            }
+
+            // Show header after stopping scroll
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                header.classList.remove('hidden');
+            }, 2000);
+        } else {
+            // Remove hidden class in portrait mode
+            header.classList.remove('hidden');
+        }
+
+        lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    });
+
     // Driver selector
     document.getElementById('driver-select').addEventListener('change', function(e) {
         currentDriver = e.target.value;
@@ -235,6 +847,21 @@ function setupEventListeners() {
             currentTab = this.dataset.tab;
             applyFilters();
         });
+    });
+
+    // View toggle buttons (mobile)
+    document.getElementById('card-view-btn').addEventListener('click', function() {
+        document.getElementById('card-view-btn').classList.add('active');
+        document.getElementById('table-view-btn').classList.remove('active');
+        document.getElementById('bookings-cards').style.display = 'block';
+        document.getElementById('mobile-table').style.display = 'none';
+    });
+
+    document.getElementById('table-view-btn').addEventListener('click', function() {
+        document.getElementById('table-view-btn').classList.add('active');
+        document.getElementById('card-view-btn').classList.remove('active');
+        document.getElementById('bookings-cards').style.display = 'none';
+        document.getElementById('mobile-table').style.display = 'block';
     });
 
     // Filter tags
@@ -279,6 +906,8 @@ function applyFilters() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
+    console.log('Applying filters:', { currentTab, today, tomorrow: tomorrowStr, totalBookings: allBookings.length });
+
     filteredBookings = allBookings.filter(booking => {
         // Date filter based on tab
         let dateMatch = true;
@@ -309,11 +938,15 @@ function applyFilters() {
         return timeA - timeB;
     });
 
+    console.log('Filtered bookings:', filteredBookings.length, 'bookings');
+
     displayBookings();
     updateStats();
 }
 
 function displayBookings() {
+    console.log('displayBookings called with', filteredBookings.length, 'bookings');
+
     // Display in table (desktop)
     const tbody = document.getElementById('bookings-tbody');
     tbody.innerHTML = '';
@@ -322,7 +955,12 @@ function displayBookings() {
     const cardsContainer = document.getElementById('bookings-cards');
     cardsContainer.innerHTML = '';
 
+    // Display in mobile table
+    const mobileTbody = document.getElementById('mobile-tbody');
+    mobileTbody.innerHTML = '';
+
     if (filteredBookings.length === 0) {
+        console.log('No bookings to display');
         document.getElementById('no-results').style.display = 'block';
         return;
     } else {
@@ -337,7 +975,47 @@ function displayBookings() {
         // Card for mobile
         const card = createBookingCard(booking);
         cardsContainer.appendChild(card);
+
+        // Mobile table row
+        const mobileRow = createMobileTableRow(booking);
+        mobileTbody.appendChild(mobileRow);
     });
+}
+
+function createMobileTableRow(booking) {
+    const tr = document.createElement('tr');
+
+    // Highlight my jobs
+    if (booking.driver === currentDriver) {
+        tr.style.backgroundColor = '#f1f8f4';
+    }
+
+    const driverName = getDriverName(booking.driver);
+    const driverClass = booking.driver ? 'assigned' : 'unassigned';
+    const shortPickup = shortenLocation(booking.pickupLocation);
+    const shortDropoff = shortenLocation(booking.dropoffLocation);
+    const shortAgent = shortenAgent(booking.agent);
+    const paymentClass = booking.paymentStatus === 'paid' ? 'payment-paid' :
+                         booking.paymentStatus === 'pending' ? 'payment-pending' :
+                         'payment-on-account';
+
+    tr.innerHTML = `
+        <td class="mobile-time">${booking.time || booking.departTime || 'TBC'}</td>
+        <td class="mobile-pnr">${booking.pnr}</td>
+        <td class="mobile-customer">${(booking.customerName || `${booking.firstName} ${booking.lastName}`).substring(0, 15)}</td>
+        <td class="mobile-route">${shortPickup} → ${shortDropoff}</td>
+        <td class="mobile-pax">${booking.passengers}</td>
+        <td class="mobile-driver ${driverClass}">${driverName.split(' ')[0]}</td>
+        <td class="mobile-agent">${shortAgent}</td>
+        <td class="mobile-payment ${paymentClass}">${booking.paymentStatus === 'on-account' ? 'Acc' :
+                                                     booking.paymentStatus === 'pay-on-day' ? 'POD' :
+                                                     booking.paymentStatus === 'paid' ? 'Paid' : '?'}</td>
+        <td class="mobile-price">$${booking.price ? booking.price.toFixed(0) : '0'}</td>
+    `;
+
+    tr.addEventListener('click', () => showBookingDetails(booking));
+
+    return tr;
 }
 
 function createTableRow(booking) {
@@ -358,7 +1036,9 @@ function createTableRow(booking) {
         <td>${booking.passengers}</td>
         <td class="${driverClass}">${driverName}</td>
         <td>${booking.vehicle || 'TBA'}</td>
+        <td>${booking.agent || 'Direct'}</td>
         <td class="${paymentClass}">${formatPaymentStatus(booking.paymentStatus)}</td>
+        <td>$${booking.price ? booking.price.toFixed(2) : '0.00'}</td>
         <td class="status-${booking.status}">${booking.status}</td>
         <td>
             ${getActionButtons(booking)}
@@ -418,9 +1098,12 @@ function createBookingCard(booking) {
                      booking.paymentStatus === 'pay-on-day' ? 'POD' :
                      booking.paymentStatus === 'paid' ? '✓' : '?'}
             </span>
-            ${booking.agent ? `<span class="booking-detail" style="color: #007bff;">
+            <span class="booking-detail" style="color: #007bff;">
                 ${shortenAgent(booking.agent)}
-            </span>` : ''}
+            </span>
+            <span class="booking-detail" style="color: #2e7d32; font-weight: 600;">
+                $${booking.price ? booking.price.toFixed(0) : '0'}
+            </span>
         </div>
     `;
 
@@ -457,8 +1140,19 @@ function shortenAgent(agent) {
         'Exceptional Kangaroo Island (EKI)': 'EKI',
         'Mercure Kangaroo Island Lodge (KIL)': 'Mercure',
         'Sealink': 'Sealink',
+        'SeaLink Travel Group': 'Sealink',
         'ATS Pacific Pty Ltd': 'ATS',
-        'Southern Ocean Lodge': 'SOL'
+        'Southern Ocean Lodge': 'SOL',
+        'Direct Booking': 'Direct',
+        'Booking.com': 'Booking',
+        'Expedia Group': 'Expedia',
+        'Wilderness Retreat Direct': 'Wilderness',
+        'Adventure Tours Australia': 'Adventure',
+        'TripAdvisor': 'TripAdv',
+        'GetYourGuide': 'GYG',
+        'Airbnb Experience': 'Airbnb',
+        'Lighthouse Suite Direct': 'Lighthouse',
+        'Viator': 'Viator'
     };
 
     return abbreviations[agent] || agent.split(' ')[0];
@@ -638,9 +1332,7 @@ function performSearch() {
     updateStats();
 }
 
-function updateDateTime() {
-    // Update current time display if needed
-}
+// Current time removed - users have this on their devices
 
 function formatDate(dateStr) {
     if (!dateStr) return 'TBC';

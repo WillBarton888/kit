@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <!-- Stats Bar -->
+        <!-- Stats Bar with View Toggle -->
         <div class="stats-bar">
             <div class="stat">
                 <span class="stat-value" id="total-jobs">0</span>
@@ -67,6 +67,10 @@
             <div class="stat">
                 <span class="stat-value" id="total-pax">0</span>
                 <span class="stat-label">PAX</span>
+            </div>
+            <div class="view-toggle">
+                <button class="toggle-btn active" id="card-view-btn" title="Card View">📇</button>
+                <button class="toggle-btn" id="table-view-btn" title="Table View">📋</button>
             </div>
         </div>
 
@@ -85,7 +89,9 @@
                             <th>PAX</th>
                             <th>Driver</th>
                             <th>Vehicle</th>
+                            <th>Agent</th>
                             <th>Payment</th>
+                            <th>Price</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -99,6 +105,28 @@
             <!-- Mobile Card View -->
             <div class="cards-container mobile-view" id="bookings-cards">
                 <!-- Booking cards will be inserted here -->
+            </div>
+
+            <!-- Mobile Table View -->
+            <div class="mobile-table-container mobile-view" id="mobile-table" style="display: none;">
+                <table class="mobile-bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>PNR</th>
+                            <th>Customer</th>
+                            <th>Route</th>
+                            <th>PAX</th>
+                            <th>Driver</th>
+                            <th>Agent</th>
+                            <th>Payment</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mobile-tbody">
+                        <!-- Table rows will be inserted here -->
+                    </tbody>
+                </table>
             </div>
 
             <!-- No Results Message -->

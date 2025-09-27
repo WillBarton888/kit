@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Driver Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .booking { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Driver Portal Test</h1>
+    <div id="status">Loading...</div>
+    <div id="bookings"></div>
+
+    <script>
+        console.log('Script starting...');
+
+        document.getElementById('status').innerHTML = 'Script loaded';
+
+        // Simple test data
+        const testBookings = [
+            {
+                pnr: '7561',
+                time: '09:00',
+                customerName: 'Test Customer 1',
+                pickupLocation: 'Airport',
+                dropoffLocation: 'Hotel',
+                passengers: 2,
+                driver: 'Gary Bell',
+                price: 57.50
+            },
+            {
+                pnr: '8215',
+                time: '10:00',
+                customerName: 'Test Customer 2',
+                pickupLocation: 'Hotel',
+                dropoffLocation: 'Airport',
+                passengers: 3,
+                driver: 'Shawn Olsen',
+                price: 79.20
+            }
+        ];
+
+        console.log('Test bookings:', testBookings);
+
+        const container = document.getElementById('bookings');
+        testBookings.forEach(booking => {
+            const div = document.createElement('div');
+            div.className = 'booking';
+            div.innerHTML = `
+                <strong>${booking.pnr}</strong> - ${booking.time}<br>
+                ${booking.customerName}<br>
+                ${booking.pickupLocation} → ${booking.dropoffLocation}<br>
+                PAX: ${booking.passengers} | Driver: ${booking.driver} | $${booking.price}
+            `;
+            container.appendChild(div);
+        });
+
+        document.getElementById('status').innerHTML = `Loaded ${testBookings.length} test bookings`;
+        console.log('Test complete');
+    </script>
+</body>
+</html>
