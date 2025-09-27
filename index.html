@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kangaroo Island Transfers - Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kangaroo Island Transfers</h1>
+            <p>Book your transfer service</p>
+        </header>
+
+        <main>
+            <form id="booking-form" class="booking-form">
+                <!-- Customer Information Section -->
+                <fieldset class="form-section">
+                    <legend>Customer Information</legend>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-type">Customer Type</label>
+                            <select id="customer-type" name="customerType">
+                                <option value="">Select type (optional)</option>
+                                <option value="private">Private</option>
+                                <option value="corporate">Corporate</option>
+                                <option value="agent">Agent</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="existing-customer">Existing Customer?</label>
+                            <select id="existing-customer" name="isExistingCustomer">
+                                <option value="">Select (optional)</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row three-col">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <select id="title" name="title">
+                                <option value="">Select (optional)</option>
+                                <option value="mr">Mr</option>
+                                <option value="mrs">Mrs</option>
+                                <option value="ms">Ms</option>
+                                <option value="dr">Dr</option>
+                                <option value="prof">Prof</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="first-name">First Name *</label>
+                            <input type="text" id="first-name" name="firstName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="last-name">Last Name *</label>
+                            <input type="text" id="last-name" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="has-email" name="hasEmail" value="yes">
+                                Customer has email address
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="email-group" style="display: none;">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="e.g., +61 400 123 456">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="save-customer" name="saveAsCustomer" value="yes">
+                                Save customer details for future bookings
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Trip Details Section -->
+                <fieldset class="form-section">
+                    <legend>Trip Details</legend>
+
+                    <div class="form-group">
+                        <label for="trip-type">Trip Type *</label>
+                        <select id="trip-type" name="tripType" required>
+                            <option value="">Select trip type</option>
+                            <option value="one-way">One Way</option>
+                            <option value="return">Return Trip</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pickup-location">Pickup Location *</label>
+                        <select id="pickup-location" name="pickupLocation" required>
+                            <option value="">Select pickup location</option>
+                            <option value="kingscote-airport">Kingscote Airport</option>
+                            <option value="penneshaw-ferry">Penneshaw Ferry Terminal</option>
+                            <option value="kingscote-town">Kingscote Town</option>
+                            <option value="american-river">American River</option>
+                            <option value="emu-bay">Emu Bay</option>
+                            <option value="parndana">Parndana</option>
+                            <option value="vivonne-bay">Vivonne Bay</option>
+                            <option value="flinders-chase">Flinders Chase National Park</option>
+                            <option value="remarkable-rocks">Remarkable Rocks</option>
+                            <option value="admirals-arch">Admirals Arch</option>
+                            <option value="other">Other (specify in notes)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dropoff-location">Drop-off Location *</label>
+                        <select id="dropoff-location" name="dropoffLocation" required>
+                            <option value="">Select drop-off location</option>
+                            <option value="kingscote-airport">Kingscote Airport</option>
+                            <option value="penneshaw-ferry">Penneshaw Ferry Terminal</option>
+                            <option value="kingscote-town">Kingscote Town</option>
+                            <option value="american-river">American River</option>
+                            <option value="emu-bay">Emu Bay</option>
+                            <option value="parndana">Parndana</option>
+                            <option value="vivonne-bay">Vivonne Bay</option>
+                            <option value="flinders-chase">Flinders Chase National Park</option>
+                            <option value="remarkable-rocks">Remarkable Rocks</option>
+                            <option value="admirals-arch">Admirals Arch</option>
+                            <option value="other">Other (specify in notes)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="depart-date">Departure Date *</label>
+                            <input type="date" id="depart-date" name="departDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="depart-time">Departure Time *</label>
+                            <input type="time" id="depart-time" name="departTime" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="return-datetime" style="display: none;">
+                        <div class="form-group">
+                            <label for="return-date">Return Date</label>
+                            <input type="date" id="return-date" name="returnDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="return-time">Return Time</label>
+                            <input type="time" id="return-time" name="returnTime">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="passengers">Number of Passengers *</label>
+                        <select id="passengers" name="passengers" required>
+                            <option value="">Select passengers</option>
+                            <option value="1">1 Passenger</option>
+                            <option value="2">2 Passengers</option>
+                            <option value="3">3 Passengers</option>
+                            <option value="4">4 Passengers</option>
+                            <option value="5">5 Passengers</option>
+                            <option value="6">6 Passengers</option>
+                            <option value="7">7 Passengers</option>
+                            <option value="8">8+ Passengers</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="traveller-names-group" style="display: none;">
+                        <label for="traveller-names">Traveller Names</label>
+                        <textarea id="traveller-names" name="travellerNames" rows="3" placeholder="Please list all passenger names (one per line)"></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Agent Details Section (hidden by default) -->
+                <fieldset class="form-section" id="agent-section" style="display: none;">
+                    <legend>Agent Information</legend>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agent">Agent/Company</label>
+                            <select id="agent" name="agent">
+                                <option value="">Select agent</option>
+                                <option value="exceptional-ki">Exceptional Kangaroo Island</option>
+                                <option value="southern-surgical">Southern Surgical</option>
+                                <option value="across-australia">Across Australia (Goway Travel)</option>
+                                <option value="aot-inbound">AOT Inbound Pty Ltd</option>
+                                <option value="pamdana-sports">Pamdana Sports Club</option>
+                                <option value="helloworld">Helloworld Travel</option>
+                                <option value="pan-pacific">Pan Pacific Travel</option>
+                                <option value="sea-dragon">Sea Dragon Lodge</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="agent-reference">Agent Reference</label>
+                            <input type="text" id="agent-reference" name="agentReference" placeholder="Agent booking reference number">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Additional Information Section -->
+                <fieldset class="form-section">
+                    <legend>Additional Information</legend>
+
+                    <div class="form-group">
+                        <label for="special-requirements">Special Requirements</label>
+                        <textarea id="special-requirements" name="specialRequirements" rows="3" placeholder="Any special requirements, accessibility needs, or additional notes..."></textarea>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="submit-btn">Book Transfer</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
