@@ -57,6 +57,7 @@ function createRealisticSampleData() {
             lastName: 'NICOL',
             title: 'Mrs',
             phone: '0412345678',
+            email: 'k.nicol@email.com',
             pickupLocation: 'Ozone Hotel & Apartments',
             dropoffLocation: 'Airport',
             passengers: 2,
@@ -354,6 +355,7 @@ function createRealisticSampleData() {
             firstName: 'Anderson',
             lastName: 'Peter',
             phone: '0412345603',
+            email: 'peter.anderson@gmail.com',
             pickupLocation: 'Ozone Hotel & Apartments',
             dropoffLocation: 'Flinders Chase National Park',
             passengers: 3,
@@ -1278,6 +1280,15 @@ function showBookingDetails(booking) {
     document.getElementById('complete-btn').style.display = (booking.driver === currentDriver && booking.status === 'in-progress') ? 'block' : 'none';
     document.getElementById('call-btn').style.display = booking.phone ? 'block' : 'none';
 
+    // Show/hide Pay Now button for pay-on-day bookings
+    const payNowBtn = document.getElementById('pay-now-btn');
+    if (booking.paymentStatus === 'pay-on-day' && booking.price) {
+        payNowBtn.style.display = 'block';
+        payNowBtn.onclick = () => initiatePayment(booking);
+    } else {
+        payNowBtn.style.display = 'none';
+    }
+
     // Set up call button
     if (booking.phone) {
         document.getElementById('call-btn').onclick = () => window.location.href = `tel:${booking.phone}`;
@@ -1332,7 +1343,478 @@ function performSearch() {
     updateStats();
 }
 
-// Current time removed - users have this on their devices
+// Payment Integration Functions
+function initiatePayment(booking) {
+    // Create custom payment selection modal
+    showPaymentSelectionModal(booking);
+}
+
+function showPaymentSelectionModal(booking) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Select Payment Method</h3>
+                <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <strong>Customer:</strong> ${booking.customerName}<br>
+                    <strong>Amount:</strong> $${booking.price.toFixed(2)}
+                </div>
+                <div class="payment-options">
+                    <button class="payment-option-btn cash-btn" onclick="processCashPayment(${JSON.stringify(booking).replace(/"/g, '&quot;')}); this.closest('.modal').remove();">
+                        💵 CASH PAYMENT
+                    </button>
+                    <button class="payment-option-btn square-btn" onclick="processSquarePayment(${JSON.stringify(booking).replace(/"/g, '&quot;')}); this.closest('.modal').remove();">
+                        📱 SQUARE
+                    </button>
+                    <button class="payment-option-btn worldline-btn" onclick="processANZWorldlinePayment(${JSON.stringify(booking).replace(/"/g, '&quot;')}); this.closest('.modal').remove();">
+                        💳 ANZ WORLDLINE
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+function processCashPayment(booking) {
+    // Cash Payment Processing
+    const exactAmount = booking.price.toFixed(2);
+
+    // Create cash payment confirmation modal
+    const cashModal = document.createElement('div');
+    cashModal.className = 'modal';
+    cashModal.style.display = 'flex';
+    cashModal.innerHTML = `
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>💵 Cash Payment</h3>
+                <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cash-payment-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Customer:</span>
+                        <span class="detail-value">${booking.customerName}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Transfer:</span>
+                        <span class="detail-value">${booking.pickupLocation} → ${booking.dropoffLocation}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount Due:</span>
+                        <span class="detail-value" style="font-size: 24px; font-weight: bold; color: #2e7d32;">$${exactAmount}</span>
+                    </div>
+                </div>
+                <div style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <strong>💡 Payment Instructions:</strong><br>
+                    1. Collect $${exactAmount} cash from customer<br>
+                    2. Provide receipt if requested<br>
+                    3. Confirm payment received below
+                </div>
+                <div class="cash-amount-input" style="margin: 15px 0;">
+                    <label>Amount Received: $</label>
+                    <input type="number" id="cash-received" placeholder="${exactAmount}" step="0.01" min="0" style="padding: 8px; font-size: 16px; width: 100px; margin-left: 5px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button>
+                <button class="btn-success" onclick="confirmCashPayment(${JSON.stringify(booking).replace(/"/g, '&quot;')}, this)">✅ Confirm Cash Received</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(cashModal);
+
+    // Focus on amount input
+    setTimeout(() => {
+        const input = document.getElementById('cash-received');
+        if (input) input.focus();
+    }, 100);
+}
+
+function confirmCashPayment(booking, buttonElement) {
+    const receivedInput = document.getElementById('cash-received');
+    const amountReceived = parseFloat(receivedInput.value) || booking.price;
+    const amountDue = booking.price;
+
+    if (amountReceived < amountDue) {
+        alert(`Insufficient payment!\n\nAmount due: $${amountDue.toFixed(2)}\nAmount received: $${amountReceived.toFixed(2)}\nShortfall: $${(amountDue - amountReceived).toFixed(2)}`);
+        return;
+    }
+
+    const change = amountReceived - amountDue;
+    let confirmMessage = `Cash Payment Confirmation:\n\nCustomer: ${booking.customerName}\nAmount due: $${amountDue.toFixed(2)}\nAmount received: $${amountReceived.toFixed(2)}`;
+
+    if (change > 0) {
+        confirmMessage += `\nChange due: $${change.toFixed(2)}`;
+    }
+
+    confirmMessage += '\n\nConfirm cash payment received?';
+
+    if (confirm(confirmMessage)) {
+        // Record cash payment
+        markBookingAsPaid(booking, 'cash', {
+            amountReceived: amountReceived,
+            changeDue: change,
+            timestamp: new Date().toISOString()
+        });
+
+        // Close modal
+        buttonElement.closest('.modal').remove();
+
+        if (change > 0) {
+            alert(`💰 Payment Complete!\n\n✅ Give customer $${change.toFixed(2)} change`);
+        }
+    }
+}
+
+function processSquarePayment(booking) {
+    // Square Payment Integration
+    const squarePaymentData = {
+        amount: Math.round(booking.price * 100), // Convert to cents
+        currency: 'AUD',
+        reference: `KIT-${booking.pnr}`,
+        note: `Transfer: ${booking.pickupLocation} → ${booking.dropoffLocation}`,
+        customer: {
+            name: booking.customerName || `${booking.firstName} ${booking.lastName}`,
+            phone: booking.phone
+        }
+    };
+
+    console.log('Square Payment Data:', squarePaymentData);
+
+    // For Square Point of Sale API or Square Reader SDK
+    if (window.squarePayments) {
+        // Square Web Payments SDK integration
+        initiateSquareWebPayment(squarePaymentData, booking);
+    } else {
+        // Fallback: Deep link to Square app or manual entry guidance
+        const squareUrl = `square://register/charge?amount=${squarePaymentData.amount}&note=${encodeURIComponent(squarePaymentData.note)}&reference=${squarePaymentData.reference}`;
+
+        // Try deep link first, fallback to manual instructions
+        window.location.href = squareUrl;
+
+        setTimeout(() => {
+            alert(`Square app not found. Please manually process:\n\nAmount: $${booking.price.toFixed(2)}\nReference: KIT-${booking.pnr}\nCustomer: ${booking.customerName}\n\nNote: ${squarePaymentData.note}`);
+        }, 1000);
+    }
+}
+
+function processANZWorldlinePayment(booking) {
+    // ANZ Worldline Mobile Payment Integration
+    const worldlineData = {
+        amount: booking.price.toFixed(2),
+        reference: `KIT-${booking.pnr}`,
+        description: `Transfer: ${booking.pickupLocation} → ${booking.dropoffLocation}`,
+        customer_name: booking.customerName || `${booking.firstName} ${booking.lastName}`,
+        customer_phone: booking.phone,
+        merchant_ref: `PNR${booking.pnr}-${new Date().getTime()}`
+    };
+
+    console.log('ANZ Worldline Payment Data:', worldlineData);
+
+    // ANZ Worldline mobile terminal integration
+    if (window.WorldlinePayments || navigator.userAgent.includes('WorldlineApp')) {
+        // Direct integration if Worldline app is available
+        initiateWorldlinePayment(worldlineData, booking);
+    } else {
+        // Fallback: Manual entry guidance or web interface
+        const confirmPayment = confirm(`Process ANZ Worldline payment:\n\nAmount: $${worldlineData.amount}\nReference: ${worldlineData.reference}\nCustomer: ${worldlineData.customer_name}\n\nDoes your terminal support mobile integration?`);
+
+        if (confirmPayment) {
+            // Guide driver through manual entry
+            showWorldlineInstructions(worldlineData);
+        }
+    }
+}
+
+function initiateSquareWebPayment(paymentData, booking) {
+    // Square Web Payments SDK implementation
+    try {
+        // This would integrate with Square's web payments
+        alert(`Starting Square payment for $${(paymentData.amount / 100).toFixed(2)}\n\nReference: ${paymentData.reference}\nCustomer: ${paymentData.customer.name}\n\n[Square integration would launch here]`);
+
+        // Simulate successful payment for demo
+        setTimeout(() => {
+            if (confirm('Payment successful! Mark booking as paid?')) {
+                markBookingAsPaid(booking, 'square', {
+                    reference: paymentData.reference,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }, 2000);
+    } catch (error) {
+        console.error('Square payment error:', error);
+        alert('Square payment failed. Please try ANZ Worldline or manual processing.');
+    }
+}
+
+function initiateWorldlinePayment(paymentData, booking) {
+    // ANZ Worldline terminal integration
+    try {
+        alert(`Starting ANZ Worldline payment for $${paymentData.amount}\n\nReference: ${paymentData.reference}\nCustomer: ${paymentData.customer_name}\n\n[Worldline terminal integration would launch here]`);
+
+        // Simulate successful payment for demo
+        setTimeout(() => {
+            if (confirm('Payment successful! Mark booking as paid?')) {
+                markBookingAsPaid(booking, 'worldline', {
+                    reference: paymentData.reference,
+                    merchantRef: paymentData.merchant_ref,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }, 2000);
+    } catch (error) {
+        console.error('Worldline payment error:', error);
+        alert('Worldline payment failed. Please try Square or manual processing.');
+    }
+}
+
+function showWorldlineInstructions(paymentData) {
+    const instructions = `
+Manual ANZ Worldline Payment:
+
+1. Amount: $${paymentData.amount}
+2. Reference: ${paymentData.reference}
+3. Description: ${paymentData.description}
+4. Customer: ${paymentData.customer_name}
+
+Enter these details on your Worldline terminal.
+    `;
+
+    alert(instructions);
+}
+
+function markBookingAsPaid(booking, paymentMethod = 'card', paymentDetails = {}) {
+    // Update booking status to paid
+    booking.paymentStatus = 'paid';
+    booking.paymentMethod = paymentMethod;
+    booking.paymentDetails = paymentDetails;
+    booking.paidAt = new Date().toISOString();
+
+    // Update in localStorage
+    const allBookingsIndex = allBookings.findIndex(b => b.pnr === booking.pnr);
+    if (allBookingsIndex !== -1) {
+        allBookings[allBookingsIndex].paymentStatus = 'paid';
+        allBookings[allBookingsIndex].paymentMethod = paymentMethod;
+        allBookings[allBookingsIndex].paymentDetails = paymentDetails;
+        allBookings[allBookingsIndex].paidAt = booking.paidAt;
+        localStorage.setItem('kit-bookings', JSON.stringify(allBookings));
+    }
+
+    // Refresh display
+    applyFilters();
+    closeModal();
+
+    // Show success message briefly, then offer invoice generation
+    let successMessage = `Payment recorded for booking ${booking.pnr}!\n\nCustomer: ${booking.customerName}\nAmount: $${booking.price.toFixed(2)}\nMethod: ${paymentMethod.toUpperCase()}\nStatus: PAID ✅`;
+
+    if (paymentMethod === 'cash' && paymentDetails.changeDue > 0) {
+        successMessage += `\n\n💰 Change Due: $${paymentDetails.changeDue.toFixed(2)}`;
+    }
+
+    alert(successMessage);
+
+    // Offer invoice generation after payment
+    setTimeout(() => {
+        showInvoiceGenerationModal(booking, paymentMethod, paymentDetails);
+    }, 500);
+}
+
+// Invoice Generation Functions
+function showInvoiceGenerationModal(booking, paymentMethod, paymentDetails) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>📧 Send Invoice</h3>
+                <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: bold; color: #4caf50;">Payment Successful! ✅</div>
+                    <div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <strong>Customer:</strong> ${booking.customerName}<br>
+                        <strong>Amount:</strong> $${booking.price.toFixed(2)}<br>
+                        <strong>Method:</strong> ${paymentMethod.toUpperCase()}
+                    </div>
+                </div>
+
+                <div class="invoice-question">
+                    <p style="font-size: 16px; text-align: center; margin-bottom: 20px;">
+                        <strong>Would the customer like a tax invoice emailed?</strong>
+                    </p>
+
+                    <div class="email-section" id="email-section">
+                        <label for="customer-email" style="font-weight: 600; display: block; margin-bottom: 8px;">
+                            Email Address:
+                        </label>
+                        <input type="email" id="customer-email" placeholder="customer@example.com"
+                               value="${booking.email || ''}"
+                               style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 15px;">
+
+                        <div style="font-size: 12px; color: #666; margin-bottom: 20px;">
+                            📧 Invoice will include GST details and comply with Australian tax requirements
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button class="btn-secondary invoice-dismiss" onclick="dismissInvoice(this, ${JSON.stringify(booking).replace(/"/g, '&quot;')})">
+                    ❌ Customer Doesn't Want Invoice
+                </button>
+                <button class="btn-primary send-invoice-btn" onclick="sendInvoice(${JSON.stringify(booking).replace(/"/g, '&quot;')}, '${paymentMethod}', ${JSON.stringify(paymentDetails).replace(/"/g, '&quot;')}, this)">
+                    📧 Send Invoice
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Focus on email input if empty
+    setTimeout(() => {
+        const emailInput = document.getElementById('customer-email');
+        if (emailInput && !emailInput.value) {
+            emailInput.focus();
+        }
+    }, 100);
+}
+
+function dismissInvoice(buttonElement, booking) {
+    // Record that customer declined invoice
+    booking.invoiceDeclined = true;
+    booking.invoiceDeclinedAt = new Date().toISOString();
+
+    // Update in localStorage
+    const allBookingsIndex = allBookings.findIndex(b => b.pnr === booking.pnr);
+    if (allBookingsIndex !== -1) {
+        allBookings[allBookingsIndex].invoiceDeclined = true;
+        allBookings[allBookingsIndex].invoiceDeclinedAt = booking.invoiceDeclinedAt;
+        localStorage.setItem('kit-bookings', JSON.stringify(allBookings));
+    }
+
+    alert('✅ Invoice declined - no email will be sent.');
+    buttonElement.closest('.modal').remove();
+}
+
+function sendInvoice(booking, paymentMethod, paymentDetails, buttonElement) {
+    const emailInput = document.getElementById('customer-email');
+    const customerEmail = emailInput.value.trim();
+
+    // Validate email address
+    if (!customerEmail) {
+        alert('Please enter a valid email address or click "Customer Doesn\'t Want Invoice"');
+        emailInput.focus();
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+        alert('Please enter a valid email address (e.g., customer@example.com)');
+        emailInput.focus();
+        return;
+    }
+
+    // Show sending progress
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '📧 Sending Invoice...';
+
+    // Generate and send invoice
+    generateAndSendInvoice(booking, paymentMethod, paymentDetails, customerEmail)
+        .then(() => {
+            // Update booking with email and invoice info
+            booking.email = customerEmail;
+            booking.invoiceSent = true;
+            booking.invoiceSentAt = new Date().toISOString();
+
+            // Update in localStorage
+            const allBookingsIndex = allBookings.findIndex(b => b.pnr === booking.pnr);
+            if (allBookingsIndex !== -1) {
+                allBookings[allBookingsIndex].email = customerEmail;
+                allBookings[allBookingsIndex].invoiceSent = true;
+                allBookings[allBookingsIndex].invoiceSentAt = booking.invoiceSentAt;
+                localStorage.setItem('kit-bookings', JSON.stringify(allBookings));
+            }
+
+            alert(`✅ Tax invoice sent successfully to:\n${customerEmail}\n\nInvoice #: KIT-${booking.pnr}-${new Date().getFullYear()}`);
+            buttonElement.closest('.modal').remove();
+        })
+        .catch((error) => {
+            console.error('Invoice sending failed:', error);
+            alert('❌ Failed to send invoice. Please try again or contact support.');
+            buttonElement.disabled = false;
+            buttonElement.innerHTML = '📧 Send Invoice';
+        });
+}
+
+async function generateAndSendInvoice(booking, paymentMethod, paymentDetails, customerEmail) {
+    // Generate invoice data
+    const invoiceData = generateInvoiceData(booking, paymentMethod, paymentDetails);
+
+    console.log('Generating invoice for:', customerEmail);
+    console.log('Invoice data:', invoiceData);
+
+    // Simulate invoice generation and email sending
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // In a real implementation, this would:
+            // 1. Generate PDF invoice using a library like jsPDF
+            // 2. Send email via service like EmailJS, SendGrid, or your backend API
+            // 3. Include GST calculation and Australian tax compliance details
+
+            // For demo purposes, we'll simulate success
+            if (Math.random() > 0.1) { // 90% success rate for demo
+                resolve();
+            } else {
+                reject(new Error('Network error'));
+            }
+        }, 2000);
+    });
+}
+
+function generateInvoiceData(booking, paymentMethod, paymentDetails) {
+    const invoiceNumber = `KIT-${booking.pnr}-${new Date().getFullYear()}`;
+    const gstRate = 0.10; // 10% GST
+    const subtotal = booking.price / (1 + gstRate);
+    const gstAmount = booking.price - subtotal;
+
+    return {
+        invoiceNumber: invoiceNumber,
+        customerName: booking.customerName,
+        customerEmail: booking.email,
+        serviceDate: booking.date || booking.departDate,
+        serviceTime: booking.time || booking.departTime,
+        pickup: booking.pickupLocation,
+        dropoff: booking.dropoffLocation,
+        passengers: booking.passengers,
+        vehicle: booking.vehicle,
+        driver: getDriverName(booking.driver),
+        subtotal: subtotal,
+        gstAmount: gstAmount,
+        total: booking.price,
+        paymentMethod: paymentMethod,
+        paymentDate: booking.paidAt,
+        paymentDetails: paymentDetails,
+        issueDate: new Date().toISOString(),
+        // Australian business details (you'd replace these with real details)
+        businessDetails: {
+            name: 'Kangaroo Island Transfers',
+            abn: '12 345 678 901', // Replace with real ABN
+            address: 'Kangaroo Island, SA 5221',
+            phone: '(08) 8553 2418',
+            email: 'bookings@kitransfers.com.au'
+        }
+    };
+}
 
 function formatDate(dateStr) {
     if (!dateStr) return 'TBC';

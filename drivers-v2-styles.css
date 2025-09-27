@@ -758,6 +758,169 @@ body {
     color: white;
 }
 
+.btn-pay-now {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 150px;
+    order: -1; /* Show first in modal footer */
+}
+
+.btn-pay-now:hover {
+    background: linear-gradient(135deg, #e55a2b, #e08014);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+}
+
+.btn-pay-now:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+/* Payment Method Selection */
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-option-btn {
+    padding: 15px 20px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cash-btn {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+    border-color: #4caf50;
+}
+
+.cash-btn:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
+}
+
+.square-btn {
+    background: linear-gradient(135deg, #000000, #333333);
+    color: white;
+    border-color: #000000;
+}
+
+.square-btn:hover {
+    background: linear-gradient(135deg, #333333, #555555);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.worldline-btn {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    color: white;
+    border-color: #2196f3;
+}
+
+.worldline-btn:hover {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(33, 150, 243, 0.3);
+}
+
+.payment-option-btn:active {
+    transform: translateY(0);
+}
+
+/* Cash Payment Modal Styling */
+.cash-payment-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.cash-amount-input label {
+    font-weight: 600;
+    color: #333;
+}
+
+.cash-amount-input input {
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.cash-amount-input input:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Invoice Generation Modal Styling */
+.invoice-dismiss {
+    background: #6c757d !important;
+    min-width: 180px;
+}
+
+.invoice-dismiss:hover {
+    background: #5a6268 !important;
+}
+
+.send-invoice-btn {
+    background: #007bff !important;
+    min-width: 150px;
+}
+
+.send-invoice-btn:hover {
+    background: #0056b3 !important;
+}
+
+.send-invoice-btn:disabled {
+    background: #6c757d !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#customer-email {
+    transition: border-color 0.3s ease;
+}
+
+#customer-email:focus {
+    outline: none;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.email-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.invoice-question p {
+    color: #495057;
+    font-weight: 500;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .desktop-view {
