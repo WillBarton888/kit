@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kangaroo Island Transfers - Booking</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navigation.css">
 </head>
 <body>
     <div class="container">
@@ -19,40 +20,32 @@
                 <fieldset class="form-section">
                     <legend>Customer Information</legend>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="customer-type">Customer Type</label>
-                            <select id="customer-type" name="customerType">
-                                <option value="">Select type (optional)</option>
-                                <option value="private">Private</option>
-                                <option value="corporate">Corporate</option>
-                                <option value="agent">Agent</option>
-                            </select>
+                    <div class="form-group">
+                        <label for="phone">Mobile Phone Number *</label>
+                        <div class="phone-input-container">
+                            <input type="tel" id="phone" name="phone" placeholder="e.g., 0400 123 456" required autocomplete="off">
+                            <div id="customer-suggestions" class="customer-suggestions" style="display: none;"></div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="existing-customer">Existing Customer?</label>
-                            <select id="existing-customer" name="isExistingCustomer">
-                                <option value="">Select (optional)</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
+                        <small>We'll use this to look up your previous bookings</small>
                     </div>
 
-                    <div class="form-row three-col">
-                        <div class="form-group">
-                            <label for="title">Title</label>
-                            <select id="title" name="title">
-                                <option value="">Select (optional)</option>
-                                <option value="mr">Mr</option>
-                                <option value="mrs">Mrs</option>
-                                <option value="ms">Ms</option>
-                                <option value="dr">Dr</option>
-                                <option value="prof">Prof</option>
-                            </select>
-                        </div>
+                    <div id="customer-lookup-result" style="display: none;">
+                        <p class="customer-found">✓ Welcome back! We've found your details.</p>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <select id="title" name="title">
+                            <option value="">Select (optional)</option>
+                            <option value="mr">Mr</option>
+                            <option value="mrs">Mrs</option>
+                            <option value="ms">Ms</option>
+                            <option value="dr">Dr</option>
+                            <option value="prof">Prof</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
                             <label for="first-name">First Name *</label>
                             <input type="text" id="first-name" name="firstName" required>
@@ -64,31 +57,19 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="has-email" name="hasEmail" value="yes">
-                                Customer has email address
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group" id="email-group" style="display: none;">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email">
-                    </div>
-
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" placeholder="e.g., +61 400 123 456">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com">
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="save-customer" name="saveAsCustomer" value="yes">
-                                Save customer details for future bookings
-                            </label>
+                            <label for="customer-type">Customer Type</label>
+                            <select id="customer-type" name="customerType">
+                                <option value="private">Private</option>
+                                <option value="corporate">Corporate</option>
+                                <option value="agent">Agent</option>
+                            </select>
                         </div>
                     </div>
                 </fieldset>
@@ -230,6 +211,7 @@
         </main>
     </div>
 
+    <script src="navigation.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

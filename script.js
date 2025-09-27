@@ -3,13 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const departDateInput = document.getElementById('depart-date');
     const returnDateInput = document.getElementById('return-date');
 
-    // Set minimum date to today
+    // Set minimum date to today and auto-populate departure date
     const today = new Date().toISOString().split('T')[0];
     departDateInput.setAttribute('min', today);
     returnDateInput.setAttribute('min', today);
 
+    // Auto-populate departure date to today
+    departDateInput.value = today;
+
     // Form interaction handlers
     setupFormInteractions();
+    setupCustomerLookup();
 
     function setupFormInteractions() {
         // Customer type change handler
@@ -21,22 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 agentSection.style.display = 'block';
             } else {
                 agentSection.style.display = 'none';
-            }
-        });
-
-        // Has email checkbox handler
-        const hasEmailCheckbox = document.getElementById('has-email');
-        const emailGroup = document.getElementById('email-group');
-        const emailInput = document.getElementById('email');
-
-        hasEmailCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                emailGroup.style.display = 'block';
-                emailInput.setAttribute('required', 'required');
-            } else {
-                emailGroup.style.display = 'none';
-                emailInput.removeAttribute('required');
-                emailInput.value = '';
             }
         });
 
@@ -87,6 +75,145 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function setupCustomerLookup() {
+        const phoneInput = document.getElementById('phone');
+        const customerSuggestions = document.getElementById('customer-suggestions');
+        const customerLookupResult = document.getElementById('customer-lookup-result');
+        const firstNameInput = document.getElementById('first-name');
+        const lastNameInput = document.getElementById('last-name');
+        const emailInput = document.getElementById('email');
+        const titleSelect = document.getElementById('title');
+        const customerTypeSelect = document.getElementById('customer-type');
+
+        let lookupTimeout;
+
+        // Mock customer database (in Phase 2, this will be a real API call)
+        const mockCustomers = [
+            {
+                phone: '0400123456',
+                title: 'mr',
+                firstName: 'John',
+                lastName: 'Smith',
+                email: 'john.smith@email.com',
+                customerType: 'private'
+            },
+            {
+                phone: '0412345678',
+                title: 'mrs',
+                firstName: 'Sarah',
+                lastName: 'Jones',
+                email: 'sarah.jones@email.com',
+                customerType: 'corporate'
+            },
+            {
+                phone: '0401234567',
+                title: 'dr',
+                firstName: 'John',
+                lastName: 'Wilson',
+                email: 'john.wilson@email.com',
+                customerType: 'private'
+            },
+            {
+                phone: '0412356789',
+                title: 'ms',
+                firstName: 'Sarah',
+                lastName: 'Brown',
+                email: 'sarah.brown@email.com',
+                customerType: 'agent'
+            }
+        ];
+
+        phoneInput.addEventListener('input', function() {
+            const phone = this.value.trim();
+
+            // Clear previous timeout
+            clearTimeout(lookupTimeout);
+
+            // Hide previous results
+            customerSuggestions.style.display = 'none';
+            customerLookupResult.style.display = 'none';
+
+            // Only search if phone number has at least 3 digits
+            if (phone.replace(/\D/g, '').length >= 3) {
+                // Debounce the search to avoid too many calls
+                lookupTimeout = setTimeout(() => {
+                    searchCustomers(phone);
+                }, 300);
+            }
+        });
+
+        phoneInput.addEventListener('blur', function() {
+            // Hide suggestions after a short delay (allows click to work)
+            setTimeout(() => {
+                customerSuggestions.style.display = 'none';
+            }, 200);
+        });
+
+        phoneInput.addEventListener('focus', function() {
+            const phone = this.value.trim();
+            if (phone.replace(/\D/g, '').length >= 3) {
+                searchCustomers(phone);
+            }
+        });
+
+        function searchCustomers(phone) {
+            const normalizedInput = phone.replace(/\D/g, '');
+
+            // Find customers with matching phone numbers
+            const matches = mockCustomers.filter(customer => {
+                const customerPhone = customer.phone.replace(/\D/g, '');
+                return customerPhone.includes(normalizedInput);
+            });
+
+            if (matches.length > 0) {
+                showCustomerSuggestions(matches);
+            } else {
+                customerSuggestions.style.display = 'none';
+            }
+        }
+
+        function showCustomerSuggestions(customers) {
+            customerSuggestions.innerHTML = '';
+
+            customers.forEach(customer => {
+                const suggestionDiv = document.createElement('div');
+                suggestionDiv.className = 'customer-suggestion';
+                suggestionDiv.innerHTML = `
+                    <div class="customer-name">${customer.title ? customer.title.charAt(0).toUpperCase() + customer.title.slice(1) + ' ' : ''}${customer.firstName} ${customer.lastName}</div>
+                    <div class="customer-details">${customer.email}</div>
+                    <div class="customer-phone">${customer.phone}</div>
+                `;
+
+                suggestionDiv.addEventListener('click', () => {
+                    selectCustomer(customer);
+                });
+
+                customerSuggestions.appendChild(suggestionDiv);
+            });
+
+            customerSuggestions.style.display = 'block';
+        }
+
+        function selectCustomer(customer) {
+            // Fill in customer details
+            phoneInput.value = customer.phone;
+            titleSelect.value = customer.title;
+            firstNameInput.value = customer.firstName;
+            lastNameInput.value = customer.lastName;
+            emailInput.value = customer.email;
+            customerTypeSelect.value = customer.customerType;
+
+            // Hide suggestions and show welcome message
+            customerSuggestions.style.display = 'none';
+            customerLookupResult.style.display = 'block';
+
+            // Trigger agent section if customer is agent
+            if (customer.customerType === 'agent') {
+                document.getElementById('agent-section').style.display = 'block';
+            }
+        }
+    }
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -94,15 +221,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const booking = {
             // Customer Information
-            customerType: formData.get('customerType') || '',
-            isExistingCustomer: formData.get('isExistingCustomer') || '',
+            customerType: formData.get('customerType') || 'private',
             title: formData.get('title') || '',
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
-            hasEmail: formData.get('hasEmail') === 'yes',
             email: formData.get('email') || '',
-            phone: formData.get('phone') || '',
-            saveAsCustomer: formData.get('saveAsCustomer') === 'yes',
+            phone: formData.get('phone'),
 
             // Trip Details
             tripType: formData.get('tripType'),
@@ -141,8 +265,8 @@ document.addEventListener('DOMContentLoaded', function() {
             errors.push('Last name is required');
         }
 
-        if (booking.hasEmail && !booking.email.trim()) {
-            errors.push('Email address is required when "has email" is checked');
+        if (!booking.phone.trim()) {
+            errors.push('Mobile phone number is required');
         }
 
         // Check trip required fields

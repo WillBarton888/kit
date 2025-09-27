@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIT Staff Booking System</title>
+    <link rel="stylesheet" href="staff-styles.css">
+    <link rel="stylesheet" href="navigation.css">
+</head>
+<body>
+    <div class="staff-container">
+        <header class="staff-header">
+            <div class="header-content">
+                <h1>🏝️ KIT Staff Booking System</h1>
+                <div class="header-controls">
+                    <span class="staff-name">Will Barton</span>
+                    <button class="btn-secondary" onclick="window.open('index.html', '_blank')">Public Form</button>
+                    <button class="btn-secondary" onclick="window.open('manage.html', '_blank')">📋 Manage</button>
+                    <button class="btn-primary" id="new-booking-btn">+ New Booking</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="staff-main">
+            <!-- Quick Booking Form -->
+            <div class="booking-panel">
+                <form id="staff-booking-form" class="staff-form">
+                    <!-- Row 1: Customer Phone and Customer Type -->
+                    <div class="form-row-staff">
+                        <div class="form-group-staff">
+                            <label for="staff-phone">📱 Phone</label>
+                            <div class="phone-input-container">
+                                <input type="tel" id="staff-phone" name="phone-lookup-field" placeholder="0400 123 456" required autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false">
+                                <div id="staff-customer-suggestions" class="customer-suggestions" style="display: none;"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-customer-type">👤 Customer Type</label>
+                            <select id="staff-customer-type" name="customerType">
+                                <option value="personal">Personal</option>
+                                <option value="agent">Agent</option>
+                                <option value="corporate">Corporate</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff"></div>
+                        <div class="form-group-staff"></div>
+                    </div>
+
+                    <!-- Row 2: Customer Details -->
+                    <div class="form-row-staff">
+                        <div class="form-group-staff">
+                            <label for="staff-title">Title</label>
+                            <select id="staff-title" name="title">
+                                <option value="">--</option>
+                                <option value="mr">Mr</option>
+                                <option value="mrs">Mrs</option>
+                                <option value="ms">Ms</option>
+                                <option value="dr">Dr</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-first-name">First Name *</label>
+                            <input type="text" id="staff-first-name" name="firstName" required>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-last-name">Last Name *</label>
+                            <input type="text" id="staff-last-name" name="lastName" required>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-email">📧 Email</label>
+                            <input type="email" id="staff-email" name="email" placeholder="optional">
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Trip Details and PAX -->
+                    <div class="form-row-staff">
+                        <div class="form-group-staff">
+                            <label for="staff-trip-type">🚗 Trip</label>
+                            <select id="staff-trip-type" name="tripType" required>
+                                <option value="one-way">One Way</option>
+                                <option value="return">Return</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-passengers">👥 PAX</label>
+                            <select id="staff-passengers" name="passengers" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8+</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-service-type">🚐 Service</label>
+                            <select id="staff-service-type" name="serviceType" required>
+                                <option value="private">Private</option>
+                                <option value="shared" selected>Shared</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label>💰 Price</label>
+                            <div class="price-display" id="staff-price-display">Select details</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Locations -->
+                    <div class="form-row-staff">
+                        <div class="form-group-staff">
+                            <label for="staff-pickup">📍 Pickup</label>
+                            <select id="staff-pickup" name="pickupLocation" required>
+                                <option value="">Select pickup</option>
+                                <option value="kingscote-airport">Kingscote Airport</option>
+                                <option value="penneshaw-ferry">Penneshaw Ferry</option>
+                                <option value="kingscote-town">Kingscote Town</option>
+                                <option value="american-river">American River</option>
+                                <option value="emu-bay">Emu Bay</option>
+                                <option value="parndana">Parndana</option>
+                                <option value="vivonne-bay">Vivonne Bay</option>
+                                <option value="flinders-chase">Flinders Chase NP</option>
+                                <option value="remarkable-rocks">Remarkable Rocks</option>
+                                <option value="admirals-arch">Admirals Arch</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-dropoff">🎯 Drop-off</label>
+                            <select id="staff-dropoff" name="dropoffLocation" required>
+                                <option value="">Select drop-off</option>
+                                <option value="kingscote-airport">Kingscote Airport</option>
+                                <option value="penneshaw-ferry">Penneshaw Ferry</option>
+                                <option value="kingscote-town">Kingscote Town</option>
+                                <option value="american-river">American River</option>
+                                <option value="emu-bay">Emu Bay</option>
+                                <option value="parndana">Parndana</option>
+                                <option value="vivonne-bay">Vivonne Bay</option>
+                                <option value="flinders-chase">Flinders Chase NP</option>
+                                <option value="remarkable-rocks">Remarkable Rocks</option>
+                                <option value="admirals-arch">Admirals Arch</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-depart-date">📅 Depart Date</label>
+                            <input type="date" id="staff-depart-date" name="departDate" required>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-depart-time">🕐 Time</label>
+                            <input type="time" id="staff-depart-time" name="departTime" required>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Return Trip (conditional) -->
+                    <div class="form-row-staff" id="staff-return-row" style="display: none;">
+                        <div class="form-group-staff">
+                            <label>🔄 Return Trip</label>
+                            <span class="field-info">Return details</span>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-return-date">📅 Return Date</label>
+                            <input type="date" id="staff-return-date" name="returnDate">
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-return-time">🕐 Time</label>
+                            <input type="time" id="staff-return-time" name="returnTime">
+                        </div>
+
+                        <div class="form-group-staff"></div>
+                    </div>
+
+                    <!-- Row 6: Agent Details (conditional) -->
+                    <div class="form-row-staff" id="staff-agent-row" style="display: none;">
+                        <div class="form-group-staff">
+                            <label for="staff-agent">🏢 Agent</label>
+                            <select id="staff-agent" name="agent">
+                                <option value="">Select agent</option>
+                                <option value="exceptional-ki">Exceptional KI</option>
+                                <option value="southern-surgical">Southern Surgical</option>
+                                <option value="across-australia">Across Australia</option>
+                                <option value="aot-inbound">AOT Inbound</option>
+                                <option value="helloworld">Helloworld</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-staff">
+                            <label for="staff-agent-ref">📋 Agent Ref</label>
+                            <input type="text" id="staff-agent-ref" name="agentReference" placeholder="Agent booking ref">
+                        </div>
+
+                        <div class="form-group-staff"></div>
+                        <div class="form-group-staff"></div>
+                    </div>
+
+                    <!-- Row 7: Notes & Actions -->
+                    <div class="form-row-staff">
+                        <div class="form-group-staff notes-group">
+                            <label for="staff-notes">📝 Notes</label>
+                            <textarea id="staff-notes" name="specialRequirements" rows="2" placeholder="Special requirements, notes..."></textarea>
+                        </div>
+
+                        <div class="form-group-staff travellers-group" id="staff-travellers-group" style="display: none;">
+                            <label for="staff-travellers">👥 Traveller Names</label>
+                            <textarea id="staff-travellers" name="travellerNames" rows="2" placeholder="List passenger names..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="clear-form-btn">🗑️ Clear</button>
+                        <button type="button" class="btn-secondary" id="save-draft-btn">💾 Save Draft</button>
+                        <button type="submit" class="btn-primary" id="create-booking-btn">✅ Create Booking</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Recent Bookings Panel -->
+            <div class="recent-panel">
+                <h3>📋 Recent Bookings</h3>
+                <div class="recent-bookings" id="recent-bookings">
+                    <div class="booking-item">
+                        <div class="booking-pnr">KIT8470</div>
+                        <div class="booking-customer">John Smith</div>
+                        <div class="booking-route">Airport → Ferry</div>
+                        <div class="booking-date">Today 14:30</div>
+                        <div class="booking-status status-confirmed">Confirmed</div>
+                    </div>
+                    <div class="booking-item">
+                        <div class="booking-pnr">KIT8469</div>
+                        <div class="booking-customer">Sarah Jones</div>
+                        <div class="booking-route">Ferry → Flinders Chase</div>
+                        <div class="booking-date">Tomorrow 09:00</div>
+                        <div class="booking-status status-pending">Pending</div>
+                    </div>
+                    <div class="booking-item">
+                        <div class="booking-pnr">KIT8468</div>
+                        <div class="booking-customer">Mike Wilson</div>
+                        <div class="booking-route">Town → Airport</div>
+                        <div class="booking-date">Tomorrow 16:45</div>
+                        <div class="booking-status status-confirmed">Confirmed</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="staff-script.js"></script>
+</body>
+</html>

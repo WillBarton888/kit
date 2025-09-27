@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIT Booking Management</title>
+    <link rel="stylesheet" href="manage-styles.css">
+    <link rel="stylesheet" href="navigation.css">
+</head>
+<body>
+    <div class="manage-container">
+        <header class="manage-header">
+            <div class="header-content">
+                <h1>🏝️ KIT Booking Management</h1>
+                <div class="header-controls">
+                    <span class="current-date" id="current-date"></span>
+                    <button class="btn-primary" id="sample-data-btn" style="background: #e74c3c; margin-right: 10px;">📋 LOAD TEST DATA</button>
+                    <button class="btn-secondary" id="undo-btn" style="background: #f39c12; color: white; font-weight: bold; border: 2px solid #e67e22;" disabled>🔄 UNDO</button>
+                    <button class="btn-secondary" onclick="window.open('staff.html', '_blank')">+ New Booking</button>
+                    <button class="btn-primary" id="refresh-btn">🔄 Refresh</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="manage-main">
+            <!-- Quick Stats -->
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-number" id="today-bookings">0</div>
+                    <div class="stat-label">Today's Bookings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pending-bookings">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="confirmed-bookings">0</div>
+                    <div class="stat-label">Confirmed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="payments-pending">0</div>
+                    <div class="stat-label">Payments Pending</div>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="control-panel">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="date-filter">📅 Date</label>
+                        <input type="date" id="date-filter" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="status-filter">📋 Status</label>
+                        <select id="status-filter" class="filter-input">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="allocated">Allocated</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="driver-filter">🚗 Driver</label>
+                        <select id="driver-filter" class="filter-input">
+                            <option value="">All Drivers</option>
+                            <option value="unassigned">Unassigned</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="payment-filter">💳 Payment</label>
+                        <select id="payment-filter" class="filter-input">
+                            <option value="">All Payment</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="failed">Failed</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="cash">Cash</option>
+                            <option value="stripe-website">Stripe Web</option>
+                            <option value="square-driver">Square</option>
+                            <option value="stripe-xero">Stripe Xero</option>
+                            <option value="direct-deposit">Direct Deposit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-group">
+                    <input type="text" id="search-input" placeholder="Search bookings (PNR, name, phone...)" class="search-input">
+                    <button class="btn-primary" id="search-btn">🔍</button>
+                </div>
+            </div>
+
+            <!-- Booking List -->
+            <div class="booking-list-panel">
+                <div class="panel-header">
+                    <h3>📋 Bookings</h3>
+                    <div class="view-controls">
+                        <button class="view-btn active" id="list-view-btn">📋 List</button>
+                        <button class="view-btn" id="schedule-view-btn">📅 Schedule</button>
+                    </div>
+                </div>
+
+                <!-- List View -->
+                <div id="list-view" class="booking-view">
+                    <div class="booking-table">
+                        <div class="table-header">
+                            <div class="col-pnr sortable">PNR</div>
+                            <div class="col-customer sortable">Customer</div>
+                            <div class="col-route sortable">Route</div>
+                            <div class="col-datetime sortable">Date & Time</div>
+                            <div class="col-pax sortable">PAX</div>
+                            <div class="col-price sortable">Price</div>
+                            <div class="col-status sortable">Status</div>
+                            <div class="col-payment sortable">Payment</div>
+                            <div class="col-driver">Driver</div>
+                            <div class="col-vehicle">Vehicle</div>
+                            <div class="col-actions">Actions</div>
+                        </div>
+                        <div class="table-body" id="booking-table-body">
+                            <!-- Bookings will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule View -->
+                <div id="schedule-view" class="booking-view" style="display: none;">
+                    <div class="schedule-grid" id="schedule-grid">
+                        <!-- Schedule will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver/Vehicle Management Sidebar -->
+            <div class="resource-panel">
+                <div class="panel-header">
+                    <h3>👥 Drivers & Vehicles</h3>
+                    <button class="btn-secondary" id="add-driver-btn">+ Driver</button>
+                </div>
+
+                <div class="resource-tabs">
+                    <button class="tab-btn active" id="drivers-tab">Drivers</button>
+                    <button class="tab-btn" id="vehicles-tab">Vehicles</button>
+                </div>
+
+                <!-- Drivers Tab -->
+                <div id="drivers-content" class="tab-content">
+                    <div class="resource-list" id="drivers-list">
+                        <!-- Drivers will be listed here -->
+                    </div>
+                </div>
+
+                <!-- Vehicles Tab -->
+                <div id="vehicles-content" class="tab-content" style="display: none;">
+                    <div class="resource-list" id="vehicles-list">
+                        <!-- Vehicles will be listed here -->
+                    </div>
+                    <button class="btn-secondary resource-add-btn" id="add-vehicle-btn">+ Add Vehicle</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="booking-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Booking Details</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Booking details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modal-cancel">Cancel</button>
+                <button class="btn-primary" id="modal-save">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Driver/Vehicle Modal -->
+    <div id="resource-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="resource-modal-title">Add Driver</h3>
+                <button class="modal-close" id="resource-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resource-form">
+                    <div id="resource-form-fields">
+                        <!-- Form fields will be inserted here -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="resource-modal-cancel">Cancel</button>
+                <button class="btn-primary" id="resource-modal-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Preview Modal -->
+    <div id="email-preview-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="email-modal-title">Email Invoice Preview</h3>
+                <button class="modal-close" id="email-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="email-preview">
+                    <div class="email-fields">
+                        <div class="form-field">
+                            <label for="email-to">To:</label>
+                            <input type="email" id="email-to" readonly>
+                        </div>
+                        <div class="form-field">
+                            <label for="email-subject">Subject:</label>
+                            <input type="text" id="email-subject" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <div class="email-content">
+                        <label>Email Content:</label>
+                        <textarea id="email-body" rows="10" style="width: 100%; font-family: Arial, sans-serif;"></textarea>
+                    </div>
+
+                    <div class="invoice-preview-section">
+                        <div class="invoice-summary" id="invoice-summary">
+                            <!-- Invoice summary will be inserted here -->
+                        </div>
+                        <button type="button" class="btn-secondary" id="view-invoice-details" style="margin-top: 10px;">📋 View Full Invoice Details</button>
+                    </div>
+
+                    <div id="invoice-details" class="invoice-details" style="display: none;">
+                        <h4>Full Invoice Details</h4>
+                        <pre id="invoice-json" style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; overflow-x: auto; max-height: 300px;"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="email-modal-cancel">Cancel</button>
+                <button class="btn-primary" id="send-email-btn">📧 Send Email</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tax Invoice Display Modal -->
+    <div id="tax-invoice-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="tax-invoice-modal-title">Tax Invoice</h3>
+                <button class="modal-close" id="tax-invoice-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="tax-invoice-content" class="tax-invoice-container">
+                    <!-- Tax Invoice will be generated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="tax-invoice-print">🖨️ Print</button>
+                <button class="btn-primary" id="tax-invoice-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="manage-script.js"></script>
+</body>
+</html>

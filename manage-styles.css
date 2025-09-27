@@ -1,0 +1,1030 @@
+/* Booking Management Interface Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Tax Invoice Styles - Xero-like Design */
+.tax-invoice-container {
+    background: white;
+    padding: 40px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: #333;
+    line-height: 1.5;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tax-invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.invoice-company-details h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1976d2;
+    margin-bottom: 8px;
+}
+
+.invoice-company-details .abn {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+}
+
+.invoice-company-details .address {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.invoice-title-section {
+    text-align: right;
+}
+
+.invoice-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.invoice-number {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.invoice-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.invoice-customer-section h3,
+.invoice-payment-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-customer-details,
+.invoice-payment-details {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.invoice-table thead {
+    background: #f8f9fa;
+}
+
+.invoice-table th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #e8e8e8;
+    color: #666;
+}
+
+.invoice-table .description-col {
+    width: 50%;
+}
+
+.invoice-table .amount-col {
+    width: 15%;
+    text-align: right;
+}
+
+.invoice-table .gst-col {
+    width: 15%;
+    text-align: right;
+}
+
+.invoice-table .total-col {
+    width: 20%;
+    text-align: right;
+    font-weight: 600;
+    color: #333;
+}
+
+.invoice-totals {
+    margin-left: auto;
+    width: 300px;
+    margin-bottom: 30px;
+}
+
+.invoice-totals table {
+    width: 100%;
+    font-size: 14px;
+}
+
+.invoice-totals td {
+    padding: 8px 12px;
+    border: none;
+}
+
+.invoice-totals .subtotal-row {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.invoice-totals .gst-row {
+    color: #666;
+}
+
+.invoice-totals .total-row {
+    border-top: 2px solid #1976d2;
+    font-weight: 700;
+    font-size: 16px;
+    color: #333;
+    background: #f8f9fa;
+}
+
+.invoice-totals .total-row td {
+    padding: 12px;
+}
+
+.invoice-footer {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 30px;
+    margin-top: 40px;
+}
+
+.invoice-payment-terms {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.invoice-payment-terms h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.invoice-payment-link {
+    background: #1976d2;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.invoice-payment-link:hover {
+    background: #1565c0;
+    color: white;
+}
+
+.invoice-tax-notice {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+    border-left: 4px solid #1976d2;
+    padding-left: 16px;
+    margin-top: 20px;
+}
+
+.invoice-contact-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+@media print {
+    .tax-invoice-container {
+        box-shadow: none;
+        padding: 20px;
+    }
+
+    .modal-header,
+    .modal-footer {
+        display: none !important;
+    }
+
+    .invoice-payment-link {
+        display: none;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f5f7fa;
+    color: #2c3e50;
+    line-height: 1.4;
+}
+
+.manage-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.manage-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+    min-height: 80px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.manage-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.current-date {
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Main Layout */
+.manage-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: auto auto 1fr;
+    gap: 20px;
+    padding: 20px 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Stats Panel */
+.stats-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #3498db;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Control Panel */
+.control-panel {
+    grid-column: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 20px;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #2c3e50;
+}
+
+.filter-input {
+    padding: 8px 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.search-group {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 250px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Booking List Panel */
+.booking-list-panel {
+    grid-column: 1;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 20px;
+    border-bottom: 2px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h3 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.view-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.view-btn {
+    padding: 6px 12px;
+    border: 1px solid #e0e6ed;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.view-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* Booking Table */
+.booking-table {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 600px;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 80px 150px 180px 140px 50px 80px 100px 100px 120px 120px 100px;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #2c3e50;
+    border-bottom: 1px solid #e0e6ed;
+    min-width: 1270px;
+}
+
+.table-body {
+    min-width: 1270px;
+}
+
+.booking-row {
+    display: grid;
+    grid-template-columns: 80px 150px 180px 140px 50px 80px 100px 100px 120px 120px 100px;
+    gap: 10px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.booking-row:hover {
+    background-color: #f8f9fa;
+}
+
+.leg-booking {
+    border-left: 4px solid #3498db;
+}
+
+.leg-indicator {
+    background: #3498db;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.reservation-id {
+    color: #7f8c8d;
+    font-size: 10px;
+}
+
+.booking-pnr {
+    font-weight: 700;
+    font-family: monospace;
+    color: #2c3e50;
+}
+
+.booking-customer {
+    font-weight: 600;
+}
+
+.booking-route {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.booking-datetime {
+    font-size: 13px;
+}
+
+.booking-pax {
+    text-align: center;
+    font-weight: 600;
+}
+
+.booking-price {
+    font-weight: 600;
+    color: #27ae60;
+}
+
+.booking-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.status-pending {
+    background: #fef9e7;
+    color: #f39c12;
+}
+
+.status-confirmed {
+    background: #d5f4e6;
+    color: #27ae60;
+}
+
+.status-allocated {
+    background: #e3f2fd;
+    color: #2196f3;
+}
+
+.status-in-progress {
+    background: #fff3e0;
+    color: #ff9800;
+}
+
+.status-completed {
+    background: #f3e5f5;
+    color: #9c27b0;
+}
+
+.status-cancelled {
+    background: #fadbd8;
+    color: #e74c3c;
+}
+
+/* Payment Status Styles */
+.payment-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.payment-pending {
+    background: #fef9e7;
+    color: #f39c12;
+}
+
+.payment-paid {
+    background: #d5f4e6;
+    color: #27ae60;
+}
+
+.payment-failed {
+    background: #fadbd8;
+    color: #e74c3c;
+}
+
+.payment-refunded {
+    background: #e8f4fd;
+    color: #3498db;
+}
+
+.payment-method {
+    font-size: 10px;
+    color: #7f8c8d;
+    text-transform: lowercase;
+}
+
+.driver-select, .vehicle-select {
+    padding: 4px 8px;
+    border: 1px solid #e0e6ed;
+    border-radius: 4px;
+    font-size: 12px;
+    width: 100%;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+
+.btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-email-invoice {
+    background: #3498db;
+    color: white;
+    font-size: 14px;
+    min-width: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-email-invoice:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+/* Resource Panel */
+.resource-panel {
+    grid-column: 2;
+    grid-row: 2 / -1;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.resource-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #3498db;
+    border-bottom: 2px solid #3498db;
+}
+
+.tab-content {
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resource-item {
+    padding: 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.resource-item:hover {
+    border-color: #3498db;
+}
+
+.resource-item.available {
+    border-left: 4px solid #27ae60;
+}
+
+.resource-item.busy {
+    border-left: 4px solid #e74c3c;
+}
+
+.resource-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.resource-details {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.resource-add-btn {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Schedule View */
+.schedule-grid {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 100px repeat(24, 1fr);
+    gap: 1px;
+    background: #e0e6ed;
+}
+
+.schedule-time {
+    background: white;
+    padding: 10px 5px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.schedule-slot {
+    background: white;
+    min-height: 40px;
+    position: relative;
+}
+
+.schedule-booking {
+    background: #3498db;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin: 2px;
+    cursor: pointer;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 2px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 2px solid #ecf0f1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Form Fields */
+.form-field {
+    margin-bottom: 15px;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .manage-main {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-panel {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .stats-panel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    .table-header,
+    .booking-row {
+        grid-template-columns: 80px 1fr 100px 80px;
+        gap: 5px;
+    }
+
+    .col-route,
+    .col-datetime,
+    .col-payment,
+    .col-driver,
+    .col-vehicle,
+    .col-actions {
+        display: none;
+    }
+
+    .booking-route,
+    .booking-datetime,
+    .booking-payment,
+    .driver-select,
+    .vehicle-select,
+    .action-buttons {
+        display: none;
+    }
+}
+
+/* Sortable Headers */
+.table-header .sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.table-header .sortable:hover {
+    background-color: #e8f4fd;
+}
+
+.sort-indicator {
+    color: #3498db;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+/* Enhanced Modal Styles */
+.booking-details .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.booking-details .form-row:last-child {
+    margin-bottom: 0;
+}
+
+.modal-content {
+    max-width: 800px;
+    max-height: 90vh;
+}
+
+.modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Email Preview Modal Styles */
+.email-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.email-fields {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+.email-fields label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.email-content label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.invoice-preview-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.invoice-summary-content h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 8px;
+}
+
+.invoice-summary-content p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.invoice-details {
+    margin-top: 15px;
+    border-top: 1px solid #e0e6ed;
+    padding-top: 15px;
+}
+
+.invoice-details h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
