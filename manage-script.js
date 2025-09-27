@@ -60,7 +60,107 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Don't set any default date filter - show all bookings by default
     // document.getElementById('date-filter').value = new Date().toISOString().split('T')[0];
+
+    // Set up Emergency Control event listeners (fallback controls)
+    const emergencyUndoBtn = document.getElementById('emergency-undo-btn');
+    const emergencyRefreshBtn = document.getElementById('emergency-refresh-btn');
+    const emergencySampleDataBtn = document.getElementById('emergency-sample-data-btn');
+    const emergencyBackupBtn = document.getElementById('emergency-backup-btn');
+
+    if (emergencyUndoBtn) {
+        emergencyUndoBtn.onclick = undoLastAction;
+        console.log('Emergency undo button event listener set up');
+    }
+
+    if (emergencyRefreshBtn) {
+        emergencyRefreshBtn.onclick = () => {
+            location.reload();
+        };
+        console.log('Emergency refresh button event listener set up');
+    }
+
+    if (emergencySampleDataBtn) {
+        emergencySampleDataBtn.onclick = () => {
+            loadSampleData();
+            displayBookings();
+            displayDrivers();
+            displayVehicles();
+            updateStats();
+            alert('Sample data loaded! Emergency controls are working.');
+        };
+        console.log('Emergency sample data button event listener set up');
+    }
+
+    if (emergencyBackupBtn) {
+        emergencyBackupBtn.onclick = triggerManualBackup;
+        console.log('Emergency backup button event listener set up');
+    }
+
+    // Set date in emergency controls
+    const emergencyDateElement = document.getElementById('emergency-current-date');
+    if (emergencyDateElement) {
+        emergencyDateElement.textContent = new Date().toLocaleDateString('en-AU', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Set up backup reminders (every 30 minutes)
+    setupBackupReminders();
 });
+
+// Backup reminder system
+function setupBackupReminders() {
+    const BACKUP_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
+    let lastBackupReminder = localStorage.getItem('lastBackupReminder');
+
+    if (!lastBackupReminder) {
+        lastBackupReminder = Date.now();
+        localStorage.setItem('lastBackupReminder', lastBackupReminder);
+    }
+
+    // Check if 30 minutes have passed since last reminder
+    const timeSinceLastReminder = Date.now() - parseInt(lastBackupReminder);
+
+    if (timeSinceLastReminder >= BACKUP_INTERVAL) {
+        showBackupReminder();
+    }
+
+    // Set up interval to check every 5 minutes
+    setInterval(() => {
+        const lastReminder = parseInt(localStorage.getItem('lastBackupReminder') || '0');
+        const timeSince = Date.now() - lastReminder;
+
+        if (timeSince >= BACKUP_INTERVAL) {
+            showBackupReminder();
+        }
+    }, 5 * 60 * 1000); // Check every 5 minutes
+}
+
+function showBackupReminder() {
+    const shouldRemind = confirm('🔄 BACKUP REMINDER\n\nIt\'s been 30+ minutes since your last backup reminder.\n\nWould you like to commit your changes to git now?\n\nClick OK to be reminded again in 30 minutes, or Cancel to skip this reminder.');
+
+    if (shouldRemind) {
+        alert('💾 To backup your work:\n\n1. Open a terminal/command prompt\n2. Run: git add .\n3. Run: git commit -m "Your backup message"\n\nYour changes will be safely saved to git history!');
+    }
+
+    // Update the last reminder time regardless of choice
+    localStorage.setItem('lastBackupReminder', Date.now().toString());
+}
+
+// Add manual backup button functionality
+function triggerManualBackup() {
+    const message = prompt('💾 Manual Backup\n\nEnter a description for this backup:', 'Work in progress backup');
+
+    if (message) {
+        alert(`To complete the backup:\n\n1. Open terminal/command prompt\n2. Run: git add .\n3. Run: git commit -m "${message}"\n\nRemember: Claude can help you run these commands if needed!`);
+
+        // Reset backup reminder timer
+        localStorage.setItem('lastBackupReminder', Date.now().toString());
+    }
+}
 
 // Global data storage
 let bookings = [];
@@ -143,6 +243,25 @@ function updateUndoButton() {
         }
     } else {
         console.error('Undo button not found in updateUndoButton!');
+    }
+
+    // Also update emergency undo button
+    const emergencyUndoBtn = document.getElementById('emergency-undo-btn');
+    if (emergencyUndoBtn) {
+        if (actionHistory.length > 0) {
+            const lastAction = actionHistory[actionHistory.length - 1];
+            emergencyUndoBtn.disabled = false;
+            emergencyUndoBtn.style.opacity = '1';
+            emergencyUndoBtn.style.background = '#f39c12';
+            emergencyUndoBtn.textContent = `🔄 UNDO: ${lastAction.description}`;
+            emergencyUndoBtn.title = `Undo: ${lastAction.description}`;
+        } else {
+            emergencyUndoBtn.disabled = true;
+            emergencyUndoBtn.style.opacity = '0.6';
+            emergencyUndoBtn.style.background = '#95a5a6';
+            emergencyUndoBtn.textContent = '🔄 UNDO (No Actions)';
+            emergencyUndoBtn.title = 'No actions to undo';
+        }
     }
 }
 

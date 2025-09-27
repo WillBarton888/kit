@@ -91,6 +91,18 @@
                 </div>
             </div>
 
+            <!-- Emergency Controls (Visible Fallback) -->
+            <div class="emergency-controls" style="background: #e74c3c; color: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center;">
+                <h3 style="margin-bottom: 10px;">🚨 EMERGENCY CONTROLS (If header not visible)</h3>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn-primary" id="emergency-undo-btn" style="background: #f39c12; color: white; font-weight: bold; border: 2px solid #e67e22; font-size: 16px; padding: 10px 20px;">🔄 UNDO LAST ACTION</button>
+                    <button class="btn-primary" id="emergency-refresh-btn" style="background: #3498db; font-size: 16px; padding: 10px 20px;">🔄 REFRESH DATA</button>
+                    <button class="btn-primary" id="emergency-sample-data-btn" style="background: #e74c3c; font-size: 16px; padding: 10px 20px;">📋 LOAD TEST DATA</button>
+                    <button class="btn-primary" id="emergency-backup-btn" style="background: #27ae60; font-size: 16px; padding: 10px 20px;">💾 BACKUP NOW</button>
+                    <span style="background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 5px; font-weight: bold;" id="emergency-current-date"></span>
+                </div>
+            </div>
+
             <!-- Booking List -->
             <div class="booking-list-panel">
                 <div class="panel-header">
