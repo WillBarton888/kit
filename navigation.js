@@ -15,6 +15,9 @@ function createNavigation() {
                     <a href="staff.html" class="nav-tab ${currentPage === 'staff' ? 'active' : ''}">
                         👔 Staff Interface
                     </a>
+                    <a href="drivers.html" class="nav-tab ${currentPage === 'drivers' ? 'active' : ''}">
+                        🚗 Drivers Portal
+                    </a>
                     <a href="manage.html" class="nav-tab ${currentPage === 'manage' ? 'active' : ''}">
                         📋 Management
                     </a>
@@ -47,6 +50,8 @@ function getCurrentPage() {
         return 'public';
     } else if (filename === 'staff.html') {
         return 'staff';
+    } else if (filename === 'drivers.html') {
+        return 'drivers';
     } else if (filename === 'manage.html') {
         return 'manage';
     }
@@ -86,6 +91,18 @@ function updateNavigationInfo() {
                 <span>Staff: Will Barton</span> •
                 <span>${todayBookings.length} today</span> •
                 <span>${drafts} draft${drafts !== 1 ? 's' : ''}</span> •
+                <span>${timeStr}</span>
+            `;
+            break;
+
+        case 'drivers':
+            const unassignedTasks = bookings.filter(b => !b.driver || b.driver === 'unassigned');
+            const myTasksCount = sessionStorage.getItem('selectedDriver') ?
+                bookings.filter(b => b.driver === sessionStorage.getItem('selectedDriver')).length : 0;
+            infoHTML = `
+                <span>${myTasksCount} my tasks</span> •
+                <span>${unassignedTasks.length} unassigned</span> •
+                <span>${todayBookings.length} total today</span> •
                 <span>${timeStr}</span>
             `;
             break;

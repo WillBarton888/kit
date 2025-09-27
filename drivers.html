@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="theme-color" content="#2c3e50">
+    <title>KIT Drivers Portal</title>
+    <link rel="stylesheet" href="drivers-styles.css">
+    <link rel="stylesheet" href="navigation.css">
+</head>
+<body>
+    <div class="drivers-container">
+        <header class="drivers-header">
+            <div class="header-content">
+                <h1>🚗 KIT Drivers Portal</h1>
+                <div class="header-info">
+                    <select id="driver-select" class="driver-selector">
+                        <option value="">Select Driver...</option>
+                        <option value="john-smith">John Smith</option>
+                        <option value="sarah-wilson">Sarah Wilson</option>
+                        <option value="mike-johnson">Mike Johnson</option>
+                    </select>
+                    <span class="current-time" id="current-time"></span>
+                    <button class="btn-refresh" id="refresh-btn">🔄 Refresh</button>
+                    <button class="btn-refresh" id="load-sample-btn" style="background: #e74c3c;">📋 Load Sample</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="drivers-main">
+            <!-- Driver Welcome Section -->
+            <div class="driver-welcome" id="driver-welcome" style="display: none;">
+                <h2>Welcome, <span id="driver-name">Driver</span>!</h2>
+                <div class="driver-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="today-jobs">0</span>
+                        <span class="stat-label">Today's Jobs</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="completed-jobs">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="next-pickup-time">--:--</span>
+                        <span class="stat-label">Next Pickup</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-pax">0</span>
+                        <span class="stat-label">Total PAX Today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Schedule Overview -->
+            <div class="schedule-overview">
+                <h3>📅 Today's Schedule - All Drivers</h3>
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <div class="timeline-driver">Driver</div>
+                        <div class="timeline-hours">
+                            <span>6AM</span>
+                            <span>8AM</span>
+                            <span>10AM</span>
+                            <span>12PM</span>
+                            <span>2PM</span>
+                            <span>4PM</span>
+                            <span>6PM</span>
+                            <span>8PM</span>
+                        </div>
+                    </div>
+                    <div class="timeline-body" id="timeline-body">
+                        <!-- Driver timelines will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Lists -->
+            <div class="task-sections">
+                <!-- My Tasks -->
+                <div class="task-panel my-tasks">
+                    <h3>📋 My Tasks</h3>
+                    <div class="task-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                    </div>
+                    <div class="task-list" id="my-tasks-list">
+                        <!-- Tasks will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Unassigned Tasks -->
+                <div class="task-panel unassigned-tasks">
+                    <h3>🆘 Unassigned Tasks (Need Driver)</h3>
+                    <div class="task-list" id="unassigned-tasks-list">
+                        <!-- Unassigned tasks will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- All Tasks Today -->
+                <div class="task-panel all-tasks">
+                    <h3>👥 All Tasks Today</h3>
+                    <div class="driver-filter">
+                        <label>Filter by driver:</label>
+                        <select id="driver-filter">
+                            <option value="all">All Drivers</option>
+                            <option value="john-smith">John Smith</option>
+                            <option value="sarah-wilson">Sarah Wilson</option>
+                            <option value="mike-johnson">Mike Johnson</option>
+                        </select>
+                    </div>
+                    <div class="task-list" id="all-tasks-list">
+                        <!-- All tasks will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-btn" id="start-shift-btn">🟢 Start Shift</button>
+                <button class="action-btn" id="end-shift-btn">🔴 End Shift</button>
+                <button class="action-btn" id="break-btn">☕ Take Break</button>
+                <button class="action-btn emergency" id="emergency-btn">🆘 Emergency</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Task Details</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="task-details">
+                <!-- Task details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modal-cancel">Close</button>
+                <button class="btn-primary" id="accept-task-btn">Accept Task</button>
+                <button class="btn-success" id="start-task-btn">Start Task</button>
+                <button class="btn-complete" id="complete-task-btn">Complete Task</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="drivers-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="theme-color" content="#2c3e50">
+    <title>KIT Driver Portal</title>
+    <link rel="stylesheet" href="drivers-v2-styles.css">
+    <link rel="stylesheet" href="navigation.css">
+</head>
+<body>
+    <div class="driver-app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <h1>KIT Driver Portal</h1>
+                <div class="driver-info">
+                    <select id="driver-select" class="driver-select">
+                        <option value="">Select Driver...</option>
+                        <option value="gary-bell">Gary Bell</option>
+                        <option value="shawn-olsen">Shawn Olsen</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="today">Today</button>
+                <button class="tab-btn" data-tab="tomorrow">Tomorrow</button>
+                <button class="tab-btn" data-tab="week">Next 7 Days</button>
+                <button class="tab-btn" data-tab="my-jobs">My Jobs</button>
+            </div>
+        </header>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <div class="filter-row">
+                <input type="text" id="search-box" placeholder="Search by PNR, name, location..." class="search-input">
+                <button id="search-btn" class="btn-search">🔍</button>
+            </div>
+            <div class="filter-tags">
+                <span class="filter-tag active" data-status="all">All</span>
+                <span class="filter-tag" data-status="confirmed">Confirmed</span>
+                <span class="filter-tag" data-status="pending">Pending</span>
+                <span class="filter-tag" data-status="completed">Completed</span>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="total-jobs">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="my-jobs-count">0</span>
+                <span class="stat-label">My Jobs</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="next-pickup">--:--</span>
+                <span class="stat-label">Next Pickup</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="total-pax">0</span>
+                <span class="stat-label">PAX</span>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Desktop Table View -->
+            <div class="table-container desktop-view">
+                <table class="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>PNR</th>
+                            <th>Time</th>
+                            <th>Customer</th>
+                            <th>Pickup</th>
+                            <th>Dropoff</th>
+                            <th>PAX</th>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookings-tbody">
+                        <!-- Table rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="cards-container mobile-view" id="bookings-cards">
+                <!-- Booking cards will be inserted here -->
+            </div>
+
+            <!-- No Results Message -->
+            <div class="no-results" id="no-results" style="display: none;">
+                <p>No bookings found for the selected criteria.</p>
+            </div>
+        </main>
+
+        <!-- Floating Action Button (Mobile) -->
+        <div class="fab-container">
+            <button class="fab" id="fab-menu">+</button>
+            <div class="fab-options" id="fab-options">
+                <button class="fab-option" id="start-shift">🟢 Start Shift</button>
+                <button class="fab-option" id="end-shift">🔴 End Shift</button>
+                <button class="fab-option" id="break-btn">☕ Break</button>
+                <button class="fab-option emergency" id="emergency-btn">🆘 Emergency</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Detail Modal -->
+    <div id="booking-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-pnr">Booking Details</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modal-cancel">Close</button>
+                <button class="btn-primary" id="accept-btn" style="display: none;">Accept Job</button>
+                <button class="btn-success" id="start-btn" style="display: none;">Start Trip</button>
+                <button class="btn-complete" id="complete-btn" style="display: none;">Complete</button>
+                <button class="btn-call" id="call-btn">📞 Call Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="navigation.js"></script>
+    <script src="drivers-v2-script.js"></script>
+</body>
+</html>

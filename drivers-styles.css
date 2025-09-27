@@ -1,0 +1,545 @@
+/* Drivers Portal - Mobile First Design */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #f5f7fa;
+    color: #2c3e50;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation; /* Prevent double-tap zoom */
+}
+
+.drivers-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header - Fixed for easy access */
+.drivers-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 12px 15px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.drivers-header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.driver-selector {
+    padding: 8px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.driver-selector option {
+    background: #2c3e50;
+    color: white;
+}
+
+.current-time {
+    font-size: 14px;
+    opacity: 0.9;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.btn-refresh {
+    padding: 8px 16px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+/* Main Content */
+.drivers-main {
+    flex: 1;
+    padding: 15px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Driver Welcome Section */
+.driver-welcome {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.driver-welcome h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.driver-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* Schedule Overview */
+.schedule-overview {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.schedule-overview h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.timeline-container {
+    min-width: 600px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.timeline-header {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    border-bottom: 2px solid #e0e6ed;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.timeline-driver {
+    font-weight: 600;
+    color: #7f8c8d;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.timeline-hours {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #7f8c8d;
+}
+
+.timeline-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Task Sections */
+.task-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.task-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.task-panel h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.task-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #e0e6ed;
+    background: white;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    touch-action: manipulation;
+}
+
+.filter-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* Task List */
+.task-list {
+    max-height: 400px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.task-item {
+    background: #f8f9fa;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    touch-action: manipulation;
+}
+
+.task-item:active {
+    transform: scale(0.98);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.task-pnr {
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.task-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background: #fef5e7;
+    color: #f39c12;
+}
+
+.status-in-progress {
+    background: #e8f6f3;
+    color: #27ae60;
+}
+
+.status-completed {
+    background: #ebf5fb;
+    color: #3498db;
+}
+
+.task-details {
+    font-size: 13px;
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+.task-time {
+    font-weight: 600;
+    color: #e74c3c;
+    margin-right: 10px;
+}
+
+.task-route {
+    color: #34495e;
+}
+
+.task-passengers {
+    margin-top: 5px;
+    color: #7f8c8d;
+}
+
+/* Quick Actions - Fixed at bottom for mobile */
+.quick-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    touch-action: manipulation;
+    text-align: center;
+    min-height: 44px; /* iOS minimum touch target */
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+#start-shift-btn {
+    background: #27ae60;
+    color: white;
+}
+
+#end-shift-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+#break-btn {
+    background: #f39c12;
+    color: white;
+}
+
+.action-btn.emergency {
+    background: #c0392b;
+    color: white;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e6ed;
+}
+
+.modal-header h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.modal-close {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #f8f9fa;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e0e6ed;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.modal-footer button {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-complete {
+    background: #9b59b6;
+    color: white;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+    .drivers-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .header-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .driver-selector {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .task-sections {
+        grid-template-columns: 1fr;
+    }
+
+    .drivers-main {
+        padding-bottom: 80px; /* Space for fixed quick actions */
+    }
+
+    .timeline-container {
+        font-size: 12px;
+    }
+
+    .stat-item {
+        padding: 12px 8px;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .quick-actions {
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        min-width: 45%;
+        font-size: 13px;
+    }
+}
+
+/* iOS specific adjustments */
+@supports (-webkit-touch-callout: none) {
+    .drivers-header {
+        padding-top: max(12px, env(safe-area-inset-top));
+    }
+
+    .quick-actions {
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+    .drivers-header {
+        padding: 8px 15px;
+    }
+
+    .quick-actions {
+        position: static;
+        margin-top: 20px;
+    }
+
+    .drivers-main {
+        padding-bottom: 15px;
+    }
+}
+
+/* Touch feedback */
+@media (hover: none) {
+    .task-item:active,
+    .filter-btn:active,
+    button:active {
+        opacity: 0.8;
+    }
+}
