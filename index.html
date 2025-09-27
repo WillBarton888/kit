@@ -62,16 +62,6 @@
                         <input type="email" id="email" name="email" placeholder="your.email@example.com">
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="customer-type">Customer Type</label>
-                            <select id="customer-type" name="customerType">
-                                <option value="private">Private</option>
-                                <option value="corporate">Corporate</option>
-                                <option value="agent">Agent</option>
-                            </select>
-                        </div>
-                    </div>
                 </fieldset>
 
                 <!-- Trip Details Section -->
@@ -131,7 +121,53 @@
 
                         <div class="form-group">
                             <label for="depart-time">Departure Time *</label>
-                            <input type="time" id="depart-time" name="departTime" required>
+                            <div class="custom-time-picker" data-name="departTime" data-required="true">
+                                <input type="text" class="time-display" readonly placeholder="Select time" required>
+                                <input type="hidden" class="time-value" name="departTime">
+                                <div class="time-popup">
+                                    <div class="time-selector">
+                                        <div class="time-column hours-column">
+                                            <div class="time-header">Hour</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="06">6 AM</div>
+                                                <div class="time-option" data-value="07">7 AM</div>
+                                                <div class="time-option" data-value="08">8 AM</div>
+                                                <div class="time-option" data-value="09">9 AM</div>
+                                                <div class="time-option" data-value="10">10 AM</div>
+                                                <div class="time-option" data-value="11">11 AM</div>
+                                                <div class="time-option" data-value="12">12 PM</div>
+                                                <div class="time-option" data-value="13">1 PM</div>
+                                                <div class="time-option" data-value="14">2 PM</div>
+                                                <div class="time-option" data-value="15">3 PM</div>
+                                                <div class="time-option" data-value="16">4 PM</div>
+                                                <div class="time-option" data-value="17">5 PM</div>
+                                                <div class="time-option" data-value="18">6 PM</div>
+                                                <div class="time-option" data-value="19">7 PM</div>
+                                                <div class="time-option" data-value="20">8 PM</div>
+                                                <div class="time-option" data-value="21">9 PM</div>
+                                                <div class="time-option" data-value="22">10 PM</div>
+                                            </div>
+                                        </div>
+                                        <div class="time-column minutes-column">
+                                            <div class="time-header">Minutes</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="00">00</div>
+                                                <div class="time-option" data-value="05">05</div>
+                                                <div class="time-option" data-value="10">10</div>
+                                                <div class="time-option" data-value="15">15</div>
+                                                <div class="time-option" data-value="20">20</div>
+                                                <div class="time-option" data-value="25">25</div>
+                                                <div class="time-option" data-value="30">30</div>
+                                                <div class="time-option" data-value="35">35</div>
+                                                <div class="time-option" data-value="40">40</div>
+                                                <div class="time-option" data-value="45">45</div>
+                                                <div class="time-option" data-value="50">50</div>
+                                                <div class="time-option" data-value="55">55</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -143,7 +179,53 @@
 
                         <div class="form-group">
                             <label for="return-time">Return Time</label>
-                            <input type="time" id="return-time" name="returnTime">
+                            <div class="custom-time-picker" data-name="returnTime" data-required="false">
+                                <input type="text" class="time-display" readonly placeholder="Select time">
+                                <input type="hidden" class="time-value" name="returnTime">
+                                <div class="time-popup">
+                                    <div class="time-selector">
+                                        <div class="time-column hours-column">
+                                            <div class="time-header">Hour</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="06">6 AM</div>
+                                                <div class="time-option" data-value="07">7 AM</div>
+                                                <div class="time-option" data-value="08">8 AM</div>
+                                                <div class="time-option" data-value="09">9 AM</div>
+                                                <div class="time-option" data-value="10">10 AM</div>
+                                                <div class="time-option" data-value="11">11 AM</div>
+                                                <div class="time-option" data-value="12">12 PM</div>
+                                                <div class="time-option" data-value="13">1 PM</div>
+                                                <div class="time-option" data-value="14">2 PM</div>
+                                                <div class="time-option" data-value="15">3 PM</div>
+                                                <div class="time-option" data-value="16">4 PM</div>
+                                                <div class="time-option" data-value="17">5 PM</div>
+                                                <div class="time-option" data-value="18">6 PM</div>
+                                                <div class="time-option" data-value="19">7 PM</div>
+                                                <div class="time-option" data-value="20">8 PM</div>
+                                                <div class="time-option" data-value="21">9 PM</div>
+                                                <div class="time-option" data-value="22">10 PM</div>
+                                            </div>
+                                        </div>
+                                        <div class="time-column minutes-column">
+                                            <div class="time-header">Minutes</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="00">00</div>
+                                                <div class="time-option" data-value="05">05</div>
+                                                <div class="time-option" data-value="10">10</div>
+                                                <div class="time-option" data-value="15">15</div>
+                                                <div class="time-option" data-value="20">20</div>
+                                                <div class="time-option" data-value="25">25</div>
+                                                <div class="time-option" data-value="30">30</div>
+                                                <div class="time-option" data-value="35">35</div>
+                                                <div class="time-option" data-value="40">40</div>
+                                                <div class="time-option" data-value="45">45</div>
+                                                <div class="time-option" data-value="50">50</div>
+                                                <div class="time-option" data-value="55">55</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -168,33 +250,6 @@
                     </div>
                 </fieldset>
 
-                <!-- Agent Details Section (hidden by default) -->
-                <fieldset class="form-section" id="agent-section" style="display: none;">
-                    <legend>Agent Information</legend>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="agent">Agent/Company</label>
-                            <select id="agent" name="agent">
-                                <option value="">Select agent</option>
-                                <option value="exceptional-ki">Exceptional Kangaroo Island</option>
-                                <option value="southern-surgical">Southern Surgical</option>
-                                <option value="across-australia">Across Australia (Goway Travel)</option>
-                                <option value="aot-inbound">AOT Inbound Pty Ltd</option>
-                                <option value="pamdana-sports">Pamdana Sports Club</option>
-                                <option value="helloworld">Helloworld Travel</option>
-                                <option value="pan-pacific">Pan Pacific Travel</option>
-                                <option value="sea-dragon">Sea Dragon Lodge</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="agent-reference">Agent Reference</label>
-                            <input type="text" id="agent-reference" name="agentReference" placeholder="Agent booking reference number">
-                        </div>
-                    </div>
-                </fieldset>
 
                 <!-- Additional Information Section -->
                 <fieldset class="form-section">
@@ -203,6 +258,34 @@
                     <div class="form-group">
                         <label for="special-requirements">Special Requirements</label>
                         <textarea id="special-requirements" name="specialRequirements" rows="3" placeholder="Any special requirements, accessibility needs, or additional notes..."></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Pricing Summary Section -->
+                <fieldset class="form-section pricing-section" id="pricing-section" style="display: none;">
+                    <legend>Price Summary</legend>
+
+                    <div class="pricing-breakdown">
+                        <div class="price-row">
+                            <span class="price-label">Base Rate:</span>
+                            <span class="price-value" id="base-rate">$0.00</span>
+                        </div>
+                        <div class="price-row" id="return-price-row" style="display: none;">
+                            <span class="price-label">Return Trip:</span>
+                            <span class="price-value" id="return-rate">$0.00</span>
+                        </div>
+                        <div class="price-row" id="additional-charges-row" style="display: none;">
+                            <span class="price-label">Additional Charges:</span>
+                            <span class="price-value" id="additional-charges">$0.00</span>
+                        </div>
+                        <div class="price-row total-row">
+                            <span class="price-label">Total Price:</span>
+                            <span class="price-value total-price" id="total-price">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="pricing-notes" id="pricing-notes">
+                        <small>* Final price may vary based on actual pickup/drop-off locations and special requirements</small>
                     </div>
                 </fieldset>
 

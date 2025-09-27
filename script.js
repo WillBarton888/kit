@@ -14,19 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form interaction handlers
     setupFormInteractions();
     setupCustomerLookup();
+    setupPricingCalculation();
+    setupCustomTimePickers();
 
     function setupFormInteractions() {
-        // Customer type change handler
-        const customerTypeSelect = document.getElementById('customer-type');
-        const agentSection = document.getElementById('agent-section');
-
-        customerTypeSelect.addEventListener('change', function() {
-            if (this.value === 'agent') {
-                agentSection.style.display = 'block';
-            } else {
-                agentSection.style.display = 'none';
-            }
-        });
+        // Set customer type to private for public users
+        const customerType = 'private';
 
         // Trip type change handler
         const tripTypeSelect = document.getElementById('trip-type');
@@ -38,13 +31,38 @@ document.addEventListener('DOMContentLoaded', function() {
             if (this.value === 'return') {
                 returnDateTimeGroup.style.display = 'grid';
                 returnDateInput.setAttribute('required', 'required');
-                returnTimeInput.setAttribute('required', 'required');
+
+                // Handle custom time picker for return time
+                const returnTimePicker = returnDateTimeGroup.querySelector('.custom-time-picker');
+                if (returnTimePicker) {
+                    returnTimePicker.setAttribute('data-required', 'true');
+                    const returnTimeValue = returnTimePicker.querySelector('.time-value');
+                    if (returnTimeValue) {
+                        returnTimeValue.setAttribute('required', 'required');
+                    }
+                }
             } else {
                 returnDateTimeGroup.style.display = 'none';
                 returnDateInput.removeAttribute('required');
-                returnTimeInput.removeAttribute('required');
                 returnDateInput.value = '';
-                returnTimeInput.value = '';
+
+                // Handle custom time picker for return time
+                const returnTimePicker = returnDateTimeGroup.querySelector('.custom-time-picker');
+                if (returnTimePicker) {
+                    returnTimePicker.setAttribute('data-required', 'false');
+                    const returnTimeValue = returnTimePicker.querySelector('.time-value');
+                    const returnTimeDisplay = returnTimePicker.querySelector('.time-display');
+                    if (returnTimeValue) {
+                        returnTimeValue.removeAttribute('required');
+                        returnTimeValue.value = '';
+                    }
+                    if (returnTimeDisplay) {
+                        returnTimeDisplay.value = '';
+                    }
+                    // Clear selections
+                    const selectedOptions = returnTimePicker.querySelectorAll('.time-option.selected');
+                    selectedOptions.forEach(opt => opt.classList.remove('selected'));
+                }
             }
         });
 
@@ -214,6 +232,112 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Setup pricing calculation
+    setupPricingCalculation();
+
+    function setupPricingCalculation() {
+        const pricingSection = document.getElementById('pricing-section');
+        const baseRateElement = document.getElementById('base-rate');
+        const returnRateElement = document.getElementById('return-rate');
+        const returnPriceRow = document.getElementById('return-price-row');
+        const totalPriceElement = document.getElementById('total-price');
+        const paymentMethodSelect = document.getElementById('payment-method');
+
+        // Mock pricing data (in Phase 2, this will come from an API)
+        const pricingData = {
+            'kingscote-airport': {
+                'penneshaw-ferry': 45,
+                'kingscote-town': 15,
+                'american-river': 25,
+                'emu-bay': 35,
+                'parndana': 40,
+                'vivonne-bay': 65,
+                'flinders-chase': 85,
+                'remarkable-rocks': 90,
+                'admirals-arch': 95
+            },
+            'penneshaw-ferry': {
+                'kingscote-airport': 45,
+                'kingscote-town': 35,
+                'american-river': 40,
+                'emu-bay': 50,
+                'parndana': 55,
+                'vivonne-bay': 70,
+                'flinders-chase': 90,
+                'remarkable-rocks': 95,
+                'admirals-arch': 100
+            },
+            'kingscote-town': {
+                'kingscote-airport': 15,
+                'penneshaw-ferry': 35,
+                'american-river': 20,
+                'emu-bay': 25,
+                'parndana': 30,
+                'vivonne-bay': 55,
+                'flinders-chase': 75,
+                'remarkable-rocks': 80,
+                'admirals-arch': 85
+            }
+        };
+
+        function calculatePrice() {
+            const pickup = document.getElementById('pickup-location').value;
+            const dropoff = document.getElementById('dropoff-location').value;
+            const tripType = document.getElementById('trip-type').value;
+            const passengers = parseInt(document.getElementById('passengers').value) || 1;
+
+            if (!pickup || !dropoff) {
+                pricingSection.style.display = 'none';
+                return;
+            }
+
+            // Base rate calculation
+            let baseRate = 0;
+            if (pricingData[pickup] && pricingData[pickup][dropoff]) {
+                baseRate = pricingData[pickup][dropoff];
+            } else {
+                // Default rate for unmapped routes
+                baseRate = 50;
+            }
+
+            // Passenger multiplier for larger groups
+            if (passengers > 4) {
+                baseRate *= 1.2; // 20% increase for larger groups
+            }
+
+            let returnRate = 0;
+            if (tripType === 'return') {
+                returnRate = baseRate; // Same rate for return trip
+                returnPriceRow.style.display = 'flex';
+            } else {
+                returnPriceRow.style.display = 'none';
+            }
+
+            const totalPrice = baseRate + returnRate;
+
+            // Update display
+            baseRateElement.textContent = `$${baseRate.toFixed(2)}`;
+            returnRateElement.textContent = `$${returnRate.toFixed(2)}`;
+            totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+
+            // Show pricing section
+            pricingSection.style.display = 'block';
+
+            // Update payment method options based on customer type
+            updatePaymentMethodOptions();
+        }
+
+        function updatePaymentMethodOptions() {
+            // Public users only - no special payment method logic needed
+        }
+
+        // Add event listeners for price calculation
+        document.getElementById('pickup-location').addEventListener('change', calculatePrice);
+        document.getElementById('dropoff-location').addEventListener('change', calculatePrice);
+        document.getElementById('trip-type').addEventListener('change', calculatePrice);
+        document.getElementById('passengers').addEventListener('change', calculatePrice);
+    }
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -221,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const booking = {
             // Customer Information
-            customerType: formData.get('customerType') || 'private',
+            customerType: 'private',
             title: formData.get('title') || '',
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
@@ -239,9 +363,6 @@ document.addEventListener('DOMContentLoaded', function() {
             passengers: formData.get('passengers'),
             travellerNames: formData.get('travellerNames') || '',
 
-            // Agent Information
-            agent: formData.get('agent') || '',
-            agentReference: formData.get('agentReference') || '',
 
             // Additional Information
             specialRequirements: formData.get('specialRequirements') || ''
@@ -249,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validate form
         if (validateForm(booking)) {
-            submitBooking(booking);
+            showConfirmationPage(booking);
         }
     });
 
@@ -364,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
         errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function submitBooking(booking) {
+    function showConfirmationPage(booking) {
         // Remove any existing error messages
         const existingErrors = document.querySelectorAll('.error-message');
         existingErrors.forEach(error => error.remove());
@@ -372,40 +493,214 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generate PNR (Passenger Name Record)
         const pnr = generatePNR();
 
-        // Show success message
-        const successMessage = document.createElement('div');
-        successMessage.className = 'success-message';
-        successMessage.innerHTML = `
-            <h3>Booking Request Submitted!</h3>
-            <p><strong>Booking Reference: ${pnr}</strong></p>
-            <p>Thank you for your booking request. Here are the details:</p>
-            <ul>
-                <li><strong>Customer:</strong> ${booking.title ? booking.title + ' ' : ''}${booking.firstName} ${booking.lastName}</li>
-                ${booking.email ? `<li><strong>Email:</strong> ${booking.email}</li>` : ''}
-                ${booking.phone ? `<li><strong>Phone:</strong> ${booking.phone}</li>` : ''}
-                <li><strong>Trip Type:</strong> ${booking.tripType === 'one-way' ? 'One Way' : 'Return Trip'}</li>
-                <li><strong>From:</strong> ${getLocationName(booking.pickupLocation)}</li>
-                <li><strong>To:</strong> ${getLocationName(booking.dropoffLocation)}</li>
-                <li><strong>Departure:</strong> ${formatDate(booking.departDate)} at ${formatTime(booking.departTime)}</li>
-                ${booking.tripType === 'return' && booking.returnDate ? `<li><strong>Return:</strong> ${formatDate(booking.returnDate)} at ${formatTime(booking.returnTime)}</li>` : ''}
-                <li><strong>Passengers:</strong> ${booking.passengers}</li>
-                ${booking.travellerNames ? `<li><strong>Traveller Names:</strong> ${booking.travellerNames}</li>` : ''}
-                ${booking.agent ? `<li><strong>Agent:</strong> ${getAgentName(booking.agent)}</li>` : ''}
-                ${booking.agentReference ? `<li><strong>Agent Reference:</strong> ${booking.agentReference}</li>` : ''}
-                ${booking.specialRequirements ? `<li><strong>Special Requirements:</strong> ${booking.specialRequirements}</li>` : ''}
-            </ul>
-            <p>We will contact you shortly to confirm your transfer and provide pricing details.</p>
+        // Calculate total price for confirmation
+        const totalPrice = calculateTotalPrice(booking);
+
+        // Create confirmation page
+        const confirmationPage = document.createElement('div');
+        confirmationPage.className = 'confirmation-page';
+        confirmationPage.innerHTML = `
+            <div class="confirmation-header">
+                <h2>Review Your Booking</h2>
+                <p class="confirmation-subtitle">Please review the details below and proceed with payment</p>
+                <div class="booking-reference">
+                    <strong>Booking Reference: ${pnr}</strong>
+                </div>
+            </div>
+
+            <div class="confirmation-details">
+                <div class="detail-section">
+                    <h3>Customer Information</h3>
+                    <div class="detail-grid">
+                        <div><strong>Name:</strong> ${booking.title ? booking.title + ' ' : ''}${booking.firstName} ${booking.lastName}</div>
+                        ${booking.email ? `<div><strong>Email:</strong> ${booking.email}</div>` : ''}
+                        ${booking.phone ? `<div><strong>Phone:</strong> ${booking.phone}</div>` : ''}
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Trip Details</h3>
+                    <div class="detail-grid">
+                        <div><strong>Trip Type:</strong> ${booking.tripType === 'one-way' ? 'One Way' : 'Return Trip'}</div>
+                        <div><strong>From:</strong> ${getLocationName(booking.pickupLocation)}</div>
+                        <div><strong>To:</strong> ${getLocationName(booking.dropoffLocation)}</div>
+                        <div><strong>Departure:</strong> ${formatDate(booking.departDate)} at ${formatTime(booking.departTime)}</div>
+                        ${booking.tripType === 'return' && booking.returnDate ? `<div><strong>Return:</strong> ${formatDate(booking.returnDate)} at ${formatTime(booking.returnTime)}</div>` : ''}
+                        <div><strong>Passengers:</strong> ${booking.passengers}</div>
+                        ${booking.travellerNames ? `<div><strong>Traveller Names:</strong> ${booking.travellerNames}</div>` : ''}
+                    </div>
+                </div>
+
+                ${booking.specialRequirements ? `
+                <div class="detail-section">
+                    <h3>Special Requirements</h3>
+                    <div class="special-requirements">${booking.specialRequirements}</div>
+                </div>` : ''}
+
+                <div class="detail-section price-summary-confirm">
+                    <h3>Price Summary</h3>
+                    <div class="price-breakdown-confirm">
+                        <div class="price-line">
+                            <span>Base Rate:</span>
+                            <span>$${totalPrice.baseRate.toFixed(2)}</span>
+                        </div>
+                        ${totalPrice.returnRate > 0 ? `
+                        <div class="price-line">
+                            <span>Return Trip:</span>
+                            <span>$${totalPrice.returnRate.toFixed(2)}</span>
+                        </div>` : ''}
+                        <div class="price-line total-line">
+                            <span><strong>Total Amount:</strong></span>
+                            <span><strong>$${totalPrice.total.toFixed(2)}</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section payment-method-confirm">
+                    <h3>Payment Method</h3>
+                    <div class="payment-method-display-confirm">
+                        <div class="payment-badge-confirm">💳 Credit Card Payment</div>
+                        <small>Secure online payment processing</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                <button type="button" class="btn-back" onclick="goBackToForm()">← Back to Edit</button>
+                <button type="button" class="btn-pay-now" onclick="processPayment('${pnr}', ${totalPrice.total})">Pay Now - $${totalPrice.total.toFixed(2)}</button>
+            </div>
         `;
 
-        // Replace form with success message
+        // Replace form with confirmation page
         form.style.display = 'none';
-        form.parentNode.insertBefore(successMessage, form);
+        form.parentNode.insertBefore(confirmationPage, form);
 
-        // Scroll to success message
-        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Store booking data for potential back navigation
+        window.currentBooking = booking;
+        window.currentPNR = pnr;
 
-        // In a real application, you would send this data to a server
-        console.log('Booking submitted:', { ...booking, pnr });
+        // Scroll to top
+        confirmationPage.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Function to calculate total price for confirmation
+    function calculateTotalPrice(booking) {
+        const pickup = booking.pickupLocation;
+        const dropoff = booking.dropoffLocation;
+        const tripType = booking.tripType;
+        const passengers = parseInt(booking.passengers) || 1;
+
+        // Use the same pricing data as the form
+        const pricingData = {
+            'kingscote-airport': {
+                'penneshaw-ferry': 45,
+                'kingscote-town': 15,
+                'american-river': 25,
+                'emu-bay': 35,
+                'parndana': 40,
+                'vivonne-bay': 65,
+                'flinders-chase': 85,
+                'remarkable-rocks': 90,
+                'admirals-arch': 95
+            },
+            'penneshaw-ferry': {
+                'kingscote-airport': 45,
+                'kingscote-town': 35,
+                'american-river': 40,
+                'emu-bay': 50,
+                'parndana': 55,
+                'vivonne-bay': 70,
+                'flinders-chase': 90,
+                'remarkable-rocks': 95,
+                'admirals-arch': 100
+            },
+            'kingscote-town': {
+                'kingscote-airport': 15,
+                'penneshaw-ferry': 35,
+                'american-river': 20,
+                'emu-bay': 25,
+                'parndana': 30,
+                'vivonne-bay': 55,
+                'flinders-chase': 75,
+                'remarkable-rocks': 80,
+                'admirals-arch': 85
+            }
+        };
+
+        let baseRate = 0;
+        if (pricingData[pickup] && pricingData[pickup][dropoff]) {
+            baseRate = pricingData[pickup][dropoff];
+        } else {
+            baseRate = 50; // Default rate
+        }
+
+        // Passenger multiplier for larger groups
+        if (passengers > 4) {
+            baseRate *= 1.2;
+        }
+
+        let returnRate = 0;
+        if (tripType === 'return') {
+            returnRate = baseRate;
+        }
+
+        return {
+            baseRate: baseRate,
+            returnRate: returnRate,
+            total: baseRate + returnRate
+        };
+    }
+
+    // Global functions for confirmation page actions
+    window.goBackToForm = function() {
+        const confirmationPage = document.querySelector('.confirmation-page');
+        if (confirmationPage) {
+            confirmationPage.remove();
+            form.style.display = 'block';
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    window.processPayment = function(pnr, amount) {
+        // Simulate payment processing
+        const confirmationPage = document.querySelector('.confirmation-page');
+        confirmationPage.innerHTML = `
+            <div class="payment-processing">
+                <div class="processing-spinner"></div>
+                <h2>Processing Payment...</h2>
+                <p>Please wait while we process your credit card payment of $${amount.toFixed(2)}</p>
+                <p><strong>Booking Reference: ${pnr}</strong></p>
+            </div>
+        `;
+
+        // Simulate payment completion after 3 seconds
+        setTimeout(() => {
+            showPaymentSuccess(pnr, amount);
+        }, 3000);
+    };
+
+    function showPaymentSuccess(pnr, amount) {
+        const confirmationPage = document.querySelector('.confirmation-page');
+        confirmationPage.innerHTML = `
+            <div class="payment-success">
+                <div class="success-icon">✅</div>
+                <h2>Payment Successful!</h2>
+                <p>Your booking has been confirmed and paid.</p>
+                <div class="booking-details-final">
+                    <div class="detail-row">
+                        <strong>Booking Reference:</strong> ${pnr}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Amount Paid:</strong> $${amount.toFixed(2)}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Payment Method:</strong> Credit Card
+                    </div>
+                </div>
+                <p>A confirmation email will be sent to you shortly. Please save your booking reference for future correspondence.</p>
+                <button type="button" class="btn-new-booking" onclick="location.reload()">Make Another Booking</button>
+            </div>
+        `;
     }
 
     function generatePNR() {
@@ -458,7 +753,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function formatTime(timeString) {
+        if (!timeString || timeString === ':') return '';
         const [hours, minutes] = timeString.split(':');
+        if (!hours || !minutes) return '';
+
         const date = new Date();
         date.setHours(parseInt(hours), parseInt(minutes));
         return date.toLocaleTimeString('en-AU', {
@@ -466,5 +764,107 @@ document.addEventListener('DOMContentLoaded', function() {
             minute: '2-digit',
             hour12: true
         });
+    }
+
+    function setupCustomTimePickers() {
+        const timePickers = document.querySelectorAll('.custom-time-picker');
+
+        timePickers.forEach(picker => {
+            const displayInput = picker.querySelector('.time-display');
+            const valueInput = picker.querySelector('.time-value');
+            const popup = picker.querySelector('.time-popup');
+            const hourOptions = picker.querySelectorAll('.hours-column .time-option');
+            const minuteOptions = picker.querySelectorAll('.minutes-column .time-option');
+
+            let selectedHour = '';
+            let selectedMinute = '';
+
+            // Handle display input click to show popup
+            displayInput.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeAllTimePickerPopups();
+                popup.classList.add('show');
+                displayInput.focus();
+            });
+
+            // Handle display input focus
+            displayInput.addEventListener('focus', function() {
+                closeAllTimePickerPopups();
+                popup.classList.add('show');
+            });
+
+            // Handle hour selection
+            hourOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    hourOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedHour = this.getAttribute('data-value');
+                    updateTimeDisplay();
+                });
+            });
+
+            // Handle minute selection
+            minuteOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    minuteOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedMinute = this.getAttribute('data-value');
+                    updateTimeDisplay();
+                });
+            });
+
+            function updateTimeDisplay() {
+                if (selectedHour && selectedMinute) {
+                    const timeValue = selectedHour + ':' + selectedMinute;
+                    const displayValue = formatTime(timeValue);
+
+                    displayInput.value = displayValue;
+                    valueInput.value = timeValue;
+
+                    // Trigger change event for form validation and pricing calculation
+                    const changeEvent = new Event('change', { bubbles: true });
+                    valueInput.dispatchEvent(changeEvent);
+
+                    // Close popup after selection
+                    setTimeout(() => {
+                        popup.classList.remove('show');
+                    }, 150);
+                }
+            }
+
+            // Set required attribute validation
+            const isRequired = picker.getAttribute('data-required') === 'true';
+            if (isRequired) {
+                valueInput.setAttribute('required', 'required');
+
+                // Custom validation message
+                valueInput.addEventListener('invalid', function() {
+                    this.setCustomValidity('Please select a time');
+                });
+
+                valueInput.addEventListener('input', function() {
+                    this.setCustomValidity('');
+                });
+            }
+        });
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-time-picker')) {
+                closeAllTimePickerPopups();
+            }
+        });
+
+        // Close popup on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAllTimePickerPopups();
+            }
+        });
+
+        function closeAllTimePickerPopups() {
+            const allPopups = document.querySelectorAll('.time-popup');
+            allPopups.forEach(popup => popup.classList.remove('show'));
+        }
     }
 });
