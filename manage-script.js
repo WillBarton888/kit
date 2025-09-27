@@ -253,13 +253,13 @@ function updateUndoButton() {
             emergencyUndoBtn.disabled = false;
             emergencyUndoBtn.style.opacity = '1';
             emergencyUndoBtn.style.background = '#f39c12';
-            emergencyUndoBtn.textContent = `🔄 UNDO: ${lastAction.description}`;
+            emergencyUndoBtn.textContent = `🔄 UNDO`;
             emergencyUndoBtn.title = `Undo: ${lastAction.description}`;
         } else {
             emergencyUndoBtn.disabled = true;
             emergencyUndoBtn.style.opacity = '0.6';
             emergencyUndoBtn.style.background = '#95a5a6';
-            emergencyUndoBtn.textContent = '🔄 UNDO (No Actions)';
+            emergencyUndoBtn.textContent = '🔄 UNDO';
             emergencyUndoBtn.title = 'No actions to undo';
         }
     }

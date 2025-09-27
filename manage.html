@@ -91,15 +91,17 @@
                 </div>
             </div>
 
-            <!-- Emergency Controls (Visible Fallback) -->
-            <div class="emergency-controls" style="background: #e74c3c; color: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center;">
-                <h3 style="margin-bottom: 10px;">🚨 EMERGENCY CONTROLS (If header not visible)</h3>
-                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                    <button class="btn-primary" id="emergency-undo-btn" style="background: #f39c12; color: white; font-weight: bold; border: 2px solid #e67e22; font-size: 16px; padding: 10px 20px;">🔄 UNDO LAST ACTION</button>
-                    <button class="btn-primary" id="emergency-refresh-btn" style="background: #3498db; font-size: 16px; padding: 10px 20px;">🔄 REFRESH DATA</button>
-                    <button class="btn-primary" id="emergency-sample-data-btn" style="background: #e74c3c; font-size: 16px; padding: 10px 20px;">📋 LOAD TEST DATA</button>
-                    <button class="btn-primary" id="emergency-backup-btn" style="background: #27ae60; font-size: 16px; padding: 10px 20px;">💾 BACKUP NOW</button>
-                    <span style="background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 5px; font-weight: bold;" id="emergency-current-date"></span>
+            <!-- Emergency Controls (Minimal) -->
+            <div class="emergency-controls" style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 2px 8px; margin: 0; border-radius: 3px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                    <span style="color: #6c757d; font-size: 11px; font-weight: 500;">Emergency Controls:</span>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button class="btn-secondary" id="emergency-undo-btn" style="background: #f39c12; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">🔄 UNDO</button>
+                        <button class="btn-secondary" id="emergency-refresh-btn" style="background: #3498db; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">🔄 Refresh</button>
+                        <button class="btn-secondary" id="emergency-sample-data-btn" style="background: #6c757d; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">📋 Test Data</button>
+                        <button class="btn-secondary" id="emergency-backup-btn" style="background: #27ae60; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">💾 Backup</button>
+                        <span style="color: #495057; font-size: 11px; padding: 2px 8px;" id="emergency-current-date"></span>
+                    </div>
                 </div>
             </div>
 
