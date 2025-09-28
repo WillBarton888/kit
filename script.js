@@ -241,42 +241,86 @@ document.addEventListener('DOMContentLoaded', function() {
         const returnRateElement = document.getElementById('return-rate');
         const returnPriceRow = document.getElementById('return-price-row');
         const totalPriceElement = document.getElementById('total-price');
-        const paymentMethodSelect = document.getElementById('payment-method');
 
-        // Mock pricing data (in Phase 2, this will come from an API)
-        const pricingData = {
+        // RRP Rates by route and passenger count (from "Shared 1 way" column in spreadsheets)
+        const rrpRates = {
             'kingscote-airport': {
-                'penneshaw-ferry': 45,
-                'kingscote-town': 15,
-                'american-river': 25,
-                'emu-bay': 35,
-                'parndana': 40,
-                'vivonne-bay': 65,
-                'flinders-chase': 85,
-                'remarkable-rocks': 90,
-                'admirals-arch': 95
-            },
-            'penneshaw-ferry': {
-                'kingscote-airport': 45,
-                'kingscote-town': 35,
-                'american-river': 40,
-                'emu-bay': 50,
-                'parndana': 55,
-                'vivonne-bay': 70,
-                'flinders-chase': 90,
-                'remarkable-rocks': 95,
-                'admirals-arch': 100
+                'kingscote-town': {
+                    1: 45.00, 2: 90.00, 3: 110.00, 4: 130.00, 5: 150.00, 6: 170.00
+                },
+                'american-river': {
+                    2: 105.00, 3: 125.00, 4: 145.00, 5: 165.00, 6: 185.00
+                },
+                'penneshaw-ferry': {
+                    2: 182.00, 3: 202.00, 4: 222.00, 5: 242.00, 6: 262.00
+                },
+                'vivonne-bay': {
+                    2: 315.00, 3: 335.00, 4: 355.00, 5: 375.00, 6: 395.00
+                },
+                'emu-bay': {
+                    2: 94.50, 3: 114.50, 4: 134.50, 5: 154.50, 6: 174.50
+                },
+                'parndana': {
+                    2: 87.50, 3: 107.50, 4: 127.50, 5: 147.50, 6: 167.50
+                },
+                'remarkable-rocks': {
+                    2: 157.50, 3: 177.50, 4: 197.50, 5: 217.50, 6: 237.50
+                },
+                'admirals-arch': {
+                    2: 280.00, 3: 300.00, 4: 320.00, 5: 340.00, 6: 360.00
+                }
             },
             'kingscote-town': {
-                'kingscote-airport': 15,
-                'penneshaw-ferry': 35,
-                'american-river': 20,
-                'emu-bay': 25,
-                'parndana': 30,
-                'vivonne-bay': 55,
-                'flinders-chase': 75,
-                'remarkable-rocks': 80,
-                'admirals-arch': 85
+                'kingscote-airport': {
+                    1: 36.00, 2: 72.00, 3: 92.00, 4: 112.00, 5: 132.00, 6: 152.00
+                },
+                'american-river': {
+                    2: 138.60, 3: 158.60, 4: 178.60, 5: 198.60, 6: 218.60
+                },
+                'penneshaw-ferry': {
+                    2: 198.00, 3: 218.00, 4: 238.00, 5: 258.00, 6: 278.00
+                },
+                'vivonne-bay': {
+                    2: 326.70, 3: 346.70, 4: 366.70, 5: 386.70, 6: 406.70
+                },
+                'emu-bay': {
+                    2: 89.10, 3: 109.10, 4: 129.10, 5: 149.10, 6: 169.10
+                },
+                'parndana': {
+                    2: 161.70, 3: 181.70, 4: 201.70, 5: 221.70, 6: 241.70
+                },
+                'remarkable-rocks': {
+                    2: 211.20, 3: 231.20, 4: 251.20, 5: 271.20, 6: 291.20
+                },
+                'admirals-arch': {
+                    2: 290.40, 3: 310.40, 4: 330.40, 5: 350.40, 6: 370.40
+                }
+            },
+            'penneshaw-ferry': {
+                'kingscote-town': {
+                    2: 198.00, 3: 218.00, 4: 238.00, 5: 258.00, 6: 278.00
+                },
+                'american-river': {
+                    2: 132.00, 3: 152.00, 4: 172.00, 5: 192.00, 6: 212.00
+                },
+                'parndana': {
+                    2: 257.40, 3: 277.40, 4: 297.40, 5: 317.40, 6: 337.40
+                },
+                'vivonne-bay': {
+                    2: 297.00, 3: 317.00, 4: 337.00, 5: 357.00, 6: 377.00
+                },
+                'emu-bay': {
+                    2: 227.70, 3: 247.70, 4: 267.70, 5: 287.70, 6: 307.70
+                },
+                'kingscote-airport': {
+                    2: 171.60, 3: 191.60, 4: 211.60, 5: 231.60, 6: 251.60
+                },
+                'remarkable-rocks': {
+                    2: 359.70, 3: 379.70, 4: 399.70, 5: 419.70, 6: 439.70
+                },
+                'admirals-arch': {
+                    2: 99.00, 3: 119.00, 4: 139.00, 5: 159.00, 6: 179.00
+                }
             }
         };
 
@@ -291,23 +335,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Base rate calculation
-            let baseRate = 0;
-            if (pricingData[pickup] && pricingData[pickup][dropoff]) {
-                baseRate = pricingData[pickup][dropoff];
-            } else {
-                // Default rate for unmapped routes
-                baseRate = 50;
+            // Check if route exists and passenger restrictions
+            const rrpRate = getRRPRate(pickup, dropoff, passengers);
+            if (!rrpRate) {
+                // Check if it's a passenger restriction issue
+                const routeExists = rrpRates[pickup] && rrpRates[pickup][dropoff];
+                if (routeExists && passengers === 1) {
+                    // Show error - minimum 2 passengers for this route
+                    showPassengerError();
+                    return;
+                } else {
+                    pricingSection.style.display = 'none';
+                    return;
+                }
             }
 
-            // Passenger multiplier for larger groups
-            if (passengers > 4) {
-                baseRate *= 1.2; // 20% increase for larger groups
-            }
+            // Use the RRP rate directly
+            let baseRate = rrpRate;
 
             let returnRate = 0;
             if (tripType === 'return') {
-                returnRate = baseRate; // Same rate for return trip
+                returnRate = baseRate;
                 returnPriceRow.style.display = 'flex';
             } else {
                 returnPriceRow.style.display = 'none';
@@ -322,9 +370,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Show pricing section
             pricingSection.style.display = 'block';
+            hidePassengerError();
+        }
 
-            // Update payment method options based on customer type
-            updatePaymentMethodOptions();
+        function getRRPRate(pickup, dropoff, passengers) {
+            if (rrpRates[pickup] && rrpRates[pickup][dropoff]) {
+                const routeRates = rrpRates[pickup][dropoff];
+                // Use passenger count, but cap at 6+ for the lookup
+                const passengerKey = passengers > 6 ? 6 : passengers;
+                return routeRates[passengerKey] || null;
+            }
+            return null;
+        }
+
+        function showPassengerError() {
+            let errorDiv = document.getElementById('passenger-error');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = 'passenger-error';
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = '<p><strong>Minimum 2 passengers required for this route.</strong><br>Only Airport ↔ Kingscote Town allows single passenger bookings.</p>';
+                pricingSection.parentNode.insertBefore(errorDiv, pricingSection);
+            }
+            pricingSection.style.display = 'none';
+        }
+
+        function hidePassengerError() {
+            const errorDiv = document.getElementById('passenger-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
         }
 
         function updatePaymentMethodOptions() {
@@ -512,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="detail-section">
                     <h3>Customer Information</h3>
                     <div class="detail-grid">
-                        <div><strong>Name:</strong> ${booking.title ? booking.title + ' ' : ''}${booking.firstName} ${booking.lastName}</div>
+                        <div><strong>Name:</strong> ${booking.title ? formatTitle(booking.title) + ' ' : ''}${booking.firstName} ${booking.lastName}</div>
                         ${booking.email ? `<div><strong>Email:</strong> ${booking.email}</div>` : ''}
                         ${booking.phone ? `<div><strong>Phone:</strong> ${booking.phone}</div>` : ''}
                     </div>
@@ -555,14 +630,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                 </div>
-
-                <div class="detail-section payment-method-confirm">
-                    <h3>Payment Method</h3>
-                    <div class="payment-method-display-confirm">
-                        <div class="payment-badge-confirm">💳 Credit Card Payment</div>
-                        <small>Secure online payment processing</small>
-                    </div>
-                </div>
             </div>
 
             <div class="confirmation-actions">
@@ -590,54 +657,54 @@ document.addEventListener('DOMContentLoaded', function() {
         const tripType = booking.tripType;
         const passengers = parseInt(booking.passengers) || 1;
 
-        // Use the same pricing data as the form
-        const pricingData = {
+        // Use the same RRP rate matrix as the form (partial implementation for major routes)
+        const rrpRates = {
             'kingscote-airport': {
-                'penneshaw-ferry': 45,
-                'kingscote-town': 15,
-                'american-river': 25,
-                'emu-bay': 35,
-                'parndana': 40,
-                'vivonne-bay': 65,
-                'flinders-chase': 85,
-                'remarkable-rocks': 90,
-                'admirals-arch': 95
-            },
-            'penneshaw-ferry': {
-                'kingscote-airport': 45,
-                'kingscote-town': 35,
-                'american-river': 40,
-                'emu-bay': 50,
-                'parndana': 55,
-                'vivonne-bay': 70,
-                'flinders-chase': 90,
-                'remarkable-rocks': 95,
-                'admirals-arch': 100
+                'kingscote-town': {
+                    1: 45.00, 2: 90.00, 3: 110.00, 4: 130.00, 5: 150.00, 6: 170.00
+                },
+                'american-river': {
+                    2: 105.00, 3: 125.00, 4: 145.00, 5: 165.00, 6: 185.00
+                },
+                'penneshaw-ferry': {
+                    2: 182.00, 3: 202.00, 4: 222.00, 5: 242.00, 6: 262.00
+                }
             },
             'kingscote-town': {
-                'kingscote-airport': 15,
-                'penneshaw-ferry': 35,
-                'american-river': 20,
-                'emu-bay': 25,
-                'parndana': 30,
-                'vivonne-bay': 55,
-                'flinders-chase': 75,
-                'remarkable-rocks': 80,
-                'admirals-arch': 85
+                'kingscote-airport': {
+                    1: 36.00, 2: 72.00, 3: 92.00, 4: 112.00, 5: 132.00, 6: 152.00
+                },
+                'american-river': {
+                    2: 138.60, 3: 158.60, 4: 178.60, 5: 198.60, 6: 218.60
+                },
+                'penneshaw-ferry': {
+                    2: 198.00, 3: 218.00, 4: 238.00, 5: 258.00, 6: 278.00
+                }
+            },
+            'penneshaw-ferry': {
+                'kingscote-town': {
+                    2: 198.00, 3: 218.00, 4: 238.00, 5: 258.00, 6: 278.00
+                },
+                'american-river': {
+                    2: 132.00, 3: 152.00, 4: 172.00, 5: 192.00, 6: 212.00
+                },
+                'kingscote-airport': {
+                    2: 171.60, 3: 191.60, 4: 211.60, 5: 231.60, 6: 251.60
+                }
             }
         };
 
-        let baseRate = 0;
-        if (pricingData[pickup] && pricingData[pickup][dropoff]) {
-            baseRate = pricingData[pickup][dropoff];
-        } else {
-            baseRate = 50; // Default rate
+        function getRRPRate(pickup, dropoff, passengers) {
+            if (rrpRates[pickup] && rrpRates[pickup][dropoff]) {
+                const routeRates = rrpRates[pickup][dropoff];
+                const passengerKey = passengers > 6 ? 6 : passengers;
+                return routeRates[passengerKey] || null;
+            }
+            return 50; // Default rate if route not found
         }
 
-        // Passenger multiplier for larger groups
-        if (passengers > 4) {
-            baseRate *= 1.2;
-        }
+        const rrpRate = getRRPRate(pickup, dropoff, passengers);
+        let baseRate = rrpRate;
 
         let returnRate = 0;
         if (tripType === 'return') {
@@ -708,6 +775,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const prefix = 'KIT';
         const number = Math.floor(Math.random() * 9000) + 1000; // 4-digit number between 1000-9999
         return prefix + number;
+    }
+
+    function formatTitle(titleValue) {
+        const titleMap = {
+            'mr': 'Mr',
+            'mrs': 'Mrs',
+            'ms': 'Ms',
+            'dr': 'Dr',
+            'prof': 'Prof'
+        };
+        return titleMap[titleValue] || titleValue;
     }
 
     function getLocationName(locationValue) {
