@@ -461,16 +461,22 @@ body {
 }
 
 .staff-container .time-popup {
-    position: absolute !important;
-    top: 100% !important;
-    left: 0 !important;
+    position: fixed !important;
     background: white !important;
     border: 1px solid #bdc3c7 !important;
     border-radius: 8px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-    z-index: 9999 !important;
+    z-index: 99999 !important;
     display: none !important;
-    min-width: 200px !important;
+    width: 140px !important;
+    max-height: 300px !important;
+    overflow: visible !important;
+}
+
+.transfer-leg .time-popup {
+    position: fixed !important;
+    z-index: 99999 !important;
+    overflow: visible !important;
 }
 
 .staff-container .time-popup.show {
@@ -484,14 +490,15 @@ body {
 
 .staff-container .time-column {
     flex: 1 !important;
-    padding: 10px 0 !important;
+    padding: 8px 0 !important;
+    min-width: 60px !important;
 }
 
 .staff-container .time-header {
-    padding: 8px 15px !important;
+    padding: 6px 8px !important;
     background: #f8f9fa !important;
     font-weight: 600 !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
     color: #2c3e50 !important;
     text-align: center !important;
     border-bottom: 1px solid #ecf0f1 !important;
@@ -503,11 +510,12 @@ body {
 }
 
 .staff-container .time-option {
-    padding: 8px 15px !important;
+    padding: 4px 8px !important;
     cursor: pointer !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     color: #2c3e50 !important;
     transition: background-color 0.2s ease !important;
+    text-align: center !important;
 }
 
 .staff-container .time-option:hover {
@@ -518,4 +526,238 @@ body {
 .staff-container .time-option.selected {
     background: #3498db !important;
     color: white !important;
+}
+
+/* Multi-Transfer Legs Styling */
+.multi-transfer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid #e9ecef;
+}
+
+.multi-transfer-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.transfer-leg {
+    background: white;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.transfer-leg.active {
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+}
+
+.leg-header {
+    background: #ecf0f1;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e1e8ed;
+    gap: 10px;
+}
+
+.leg-title {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    flex: 1;
+}
+
+.leg-price-display {
+    font-weight: 600;
+    color: #27ae60;
+    font-size: 14px;
+    background: rgba(39, 174, 96, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.leg-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.leg-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.leg-btn.remove {
+    background: #e74c3c;
+    color: white;
+}
+
+.leg-btn.remove:hover {
+    background: #c0392b;
+}
+
+.leg-btn.toggle {
+    background: #95a5a6;
+    color: white;
+}
+
+.leg-btn.toggle:hover {
+    background: #7f8c8d;
+}
+
+.leg-content {
+    padding: 15px;
+}
+
+.leg-content.collapsed {
+    display: none;
+}
+
+.leg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.leg-row:last-child {
+    margin-bottom: 0;
+}
+
+.leg-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.leg-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.leg-group select,
+.leg-group input {
+    padding: 8px 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.leg-group select:focus,
+.leg-group input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.leg-summary {
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+.leg-price {
+    font-weight: 600;
+    color: #27ae60;
+}
+
+.add-transfer-bottom {
+    text-align: center;
+    margin: 20px 0 10px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #bdc3c7;
+}
+
+.add-transfer-bottom .btn-secondary {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.add-transfer-bottom .btn-secondary:hover {
+    background: #2980b9;
+}
+
+.total-legs-summary {
+    background: #e8f4fd;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.total-legs-summary h4 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.legs-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+}
+
+.leg-breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-price-row {
+    border-top: 1px solid #3498db;
+    padding-top: 8px;
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+/* Mobile responsiveness for multi-transfer */
+@media (max-width: 768px) {
+    .multi-transfer-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .leg-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .leg-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .leg-controls {
+        justify-content: center;
+    }
 }
