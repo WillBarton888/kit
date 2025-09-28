@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KIT Staff Booking System</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="staff-styles.css">
     <link rel="stylesheet" href="navigation.css">
 </head>
@@ -160,7 +161,53 @@
 
                         <div class="form-group-staff">
                             <label for="staff-depart-time">🕐 Time</label>
-                            <input type="time" id="staff-depart-time" name="departTime" required>
+                            <div class="custom-time-picker" data-name="departTime" data-required="true">
+                                <input type="text" class="time-display" readonly placeholder="Select time" required>
+                                <input type="hidden" class="time-value" name="departTime">
+                                <div class="time-popup">
+                                    <div class="time-selector">
+                                        <div class="time-column hours-column">
+                                            <div class="time-header">Hour</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="06">6 AM</div>
+                                                <div class="time-option" data-value="07">7 AM</div>
+                                                <div class="time-option" data-value="08">8 AM</div>
+                                                <div class="time-option" data-value="09">9 AM</div>
+                                                <div class="time-option" data-value="10">10 AM</div>
+                                                <div class="time-option" data-value="11">11 AM</div>
+                                                <div class="time-option" data-value="12">12 PM</div>
+                                                <div class="time-option" data-value="13">1 PM</div>
+                                                <div class="time-option" data-value="14">2 PM</div>
+                                                <div class="time-option" data-value="15">3 PM</div>
+                                                <div class="time-option" data-value="16">4 PM</div>
+                                                <div class="time-option" data-value="17">5 PM</div>
+                                                <div class="time-option" data-value="18">6 PM</div>
+                                                <div class="time-option" data-value="19">7 PM</div>
+                                                <div class="time-option" data-value="20">8 PM</div>
+                                                <div class="time-option" data-value="21">9 PM</div>
+                                                <div class="time-option" data-value="22">10 PM</div>
+                                            </div>
+                                        </div>
+                                        <div class="time-column minutes-column">
+                                            <div class="time-header">Minutes</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="00">00</div>
+                                                <div class="time-option" data-value="05">05</div>
+                                                <div class="time-option" data-value="10">10</div>
+                                                <div class="time-option" data-value="15">15</div>
+                                                <div class="time-option" data-value="20">20</div>
+                                                <div class="time-option" data-value="25">25</div>
+                                                <div class="time-option" data-value="30">30</div>
+                                                <div class="time-option" data-value="35">35</div>
+                                                <div class="time-option" data-value="40">40</div>
+                                                <div class="time-option" data-value="45">45</div>
+                                                <div class="time-option" data-value="50">50</div>
+                                                <div class="time-option" data-value="55">55</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -178,7 +225,53 @@
 
                         <div class="form-group-staff">
                             <label for="staff-return-time">🕐 Time</label>
-                            <input type="time" id="staff-return-time" name="returnTime">
+                            <div class="custom-time-picker" data-name="returnTime" data-required="false">
+                                <input type="text" class="time-display" readonly placeholder="Select time">
+                                <input type="hidden" class="time-value" name="returnTime">
+                                <div class="time-popup">
+                                    <div class="time-selector">
+                                        <div class="time-column hours-column">
+                                            <div class="time-header">Hour</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="06">6 AM</div>
+                                                <div class="time-option" data-value="07">7 AM</div>
+                                                <div class="time-option" data-value="08">8 AM</div>
+                                                <div class="time-option" data-value="09">9 AM</div>
+                                                <div class="time-option" data-value="10">10 AM</div>
+                                                <div class="time-option" data-value="11">11 AM</div>
+                                                <div class="time-option" data-value="12">12 PM</div>
+                                                <div class="time-option" data-value="13">1 PM</div>
+                                                <div class="time-option" data-value="14">2 PM</div>
+                                                <div class="time-option" data-value="15">3 PM</div>
+                                                <div class="time-option" data-value="16">4 PM</div>
+                                                <div class="time-option" data-value="17">5 PM</div>
+                                                <div class="time-option" data-value="18">6 PM</div>
+                                                <div class="time-option" data-value="19">7 PM</div>
+                                                <div class="time-option" data-value="20">8 PM</div>
+                                                <div class="time-option" data-value="21">9 PM</div>
+                                                <div class="time-option" data-value="22">10 PM</div>
+                                            </div>
+                                        </div>
+                                        <div class="time-column minutes-column">
+                                            <div class="time-header">Minutes</div>
+                                            <div class="time-options">
+                                                <div class="time-option" data-value="00">00</div>
+                                                <div class="time-option" data-value="05">05</div>
+                                                <div class="time-option" data-value="10">10</div>
+                                                <div class="time-option" data-value="15">15</div>
+                                                <div class="time-option" data-value="20">20</div>
+                                                <div class="time-option" data-value="25">25</div>
+                                                <div class="time-option" data-value="30">30</div>
+                                                <div class="time-option" data-value="35">35</div>
+                                                <div class="time-option" data-value="40">40</div>
+                                                <div class="time-option" data-value="45">45</div>
+                                                <div class="time-option" data-value="50">50</div>
+                                                <div class="time-option" data-value="55">55</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group-staff"></div>
@@ -261,6 +354,7 @@
     </div>
 
     <script src="navigation.js"></script>
+    <script src="script.js"></script>
     <script src="staff-script.js"></script>
 </body>
 </html>

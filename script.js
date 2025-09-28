@@ -374,8 +374,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function getRRPRate(pickup, dropoff, passengers) {
-            if (rrpRates[pickup] && rrpRates[pickup][dropoff]) {
-                const routeRates = rrpRates[pickup][dropoff];
+            // Get rates based on departure date (for future booking support)
+            const departDate = document.getElementById('depart-date').value;
+            let activeRates = rrpRates;
+
+            // Check if rate manager is available and use date-based rates
+            if (window.RateManager && departDate) {
+                try {
+                    activeRates = window.RateManager.getRatesForDate(departDate);
+                } catch (error) {
+                    console.warn('Error getting date-based rates, using default:', error);
+                }
+            }
+
+            if (activeRates[pickup] && activeRates[pickup][dropoff]) {
+                const routeRates = activeRates[pickup][dropoff];
                 // Use passenger count, but cap at 6+ for the lookup
                 const passengerKey = passengers > 6 ? 6 : passengers;
                 return routeRates[passengerKey] || null;
@@ -411,6 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('dropoff-location').addEventListener('change', calculatePrice);
         document.getElementById('trip-type').addEventListener('change', calculatePrice);
         document.getElementById('passengers').addEventListener('change', calculatePrice);
+        document.getElementById('depart-date').addEventListener('change', calculatePrice); // Recalculate for date-based rates
     }
 
     form.addEventListener('submit', function(e) {
@@ -695,8 +709,18 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         function getRRPRate(pickup, dropoff, passengers) {
-            if (rrpRates[pickup] && rrpRates[pickup][dropoff]) {
-                const routeRates = rrpRates[pickup][dropoff];
+            // Use date-based rates if available
+            let activeRates = rrpRates;
+            if (window.RateManager && booking.departDate) {
+                try {
+                    activeRates = window.RateManager.getRatesForDate(booking.departDate);
+                } catch (error) {
+                    console.warn('Error getting date-based rates for confirmation, using default:', error);
+                }
+            }
+
+            if (activeRates[pickup] && activeRates[pickup][dropoff]) {
+                const routeRates = activeRates[pickup][dropoff];
                 const passengerKey = passengers > 6 ? 6 : passengers;
                 return routeRates[passengerKey] || null;
             }
@@ -945,4 +969,7 @@ document.addEventListener('DOMContentLoaded', function() {
             allPopups.forEach(popup => popup.classList.remove('show'));
         }
     }
+
+    // Make setupCustomTimePickers globally available
+    window.setupCustomTimePickers = setupCustomTimePickers;
 });

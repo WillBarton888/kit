@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="navigation.css">
 </head>
 <body>
-    <div class="manage-container">
+    <div class="manage-container with-sidebar">
         <header class="manage-header">
             <div class="header-content">
                 <h1>🏝️ KIT Booking Management</h1>
                 <div class="header-controls">
                     <span class="current-date" id="current-date"></span>
+                    <button class="btn-primary" id="manage-rates-btn" style="background: #27ae60; margin-right: 10px;">💰 MANAGE RATES</button>
                     <button class="btn-primary" id="sample-data-btn" style="background: #e74c3c; margin-right: 10px;">📋 LOAD TEST DATA</button>
                     <button class="btn-secondary" id="undo-btn" style="background: #f39c12; color: white; font-weight: bold; border: 2px solid #e67e22;" disabled>🔄 UNDO</button>
                     <button class="btn-secondary" onclick="window.open('staff.html', '_blank')">+ New Booking</button>
@@ -21,6 +22,60 @@
                 </div>
             </div>
         </header>
+
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-item" data-section="reservations">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Reservations</span>
+                </div>
+                <div class="nav-item" data-section="shuttle-bookings">
+                    <span class="nav-icon">🚐</span>
+                    <span class="nav-label">Shuttle bookings</span>
+                </div>
+                <div class="nav-item" data-section="calendar">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Calendar</span>
+                </div>
+                <div class="nav-item" data-section="invoicing">
+                    <span class="nav-icon">🧾</span>
+                    <span class="nav-label">Invoicing</span>
+                </div>
+                <div class="nav-item" data-section="driver-portal">
+                    <span class="nav-icon">👨‍💼</span>
+                    <span class="nav-label">Driver portal</span>
+                </div>
+                <div class="nav-item nav-expandable" data-section="admin">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Admin</span>
+                    <span class="nav-arrow">▼</span>
+                </div>
+                <div class="nav-submenu" data-parent="admin">
+                    <div class="nav-subitem" data-section="accounts">
+                        <span class="nav-label">Accounts</span>
+                    </div>
+                    <div class="nav-subitem" data-section="customers">
+                        <span class="nav-label">Customers</span>
+                    </div>
+                    <div class="nav-subitem" data-section="agents">
+                        <span class="nav-label">Agents</span>
+                    </div>
+                    <div class="nav-subitem" data-section="rates">
+                        <span class="nav-label">Rates</span>
+                    </div>
+                    <div class="nav-subitem" data-section="locations">
+                        <span class="nav-label">Locations</span>
+                    </div>
+                    <div class="nav-subitem" data-section="vehicles">
+                        <span class="nav-label">Vehicles</span>
+                    </div>
+                    <div class="nav-subitem" data-section="exception-dates">
+                        <span class="nav-label">Exception dates</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
         <main class="manage-main">
             <!-- Quick Stats -->
@@ -92,15 +147,14 @@
             </div>
 
             <!-- Emergency Controls (Minimal) -->
-            <div class="emergency-controls" style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 2px 8px; margin: 0; border-radius: 3px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                    <span style="color: #6c757d; font-size: 11px; font-weight: 500;">Emergency Controls:</span>
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <button class="btn-secondary" id="emergency-undo-btn" style="background: #f39c12; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">🔄 UNDO</button>
-                        <button class="btn-secondary" id="emergency-refresh-btn" style="background: #3498db; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">🔄 Refresh</button>
-                        <button class="btn-secondary" id="emergency-sample-data-btn" style="background: #6c757d; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">📋 Test Data</button>
-                        <button class="btn-secondary" id="emergency-backup-btn" style="background: #27ae60; color: white; font-size: 11px; padding: 2px 8px; border: none; border-radius: 3px; line-height: 1.2;">💾 Backup</button>
-                        <span style="color: #495057; font-size: 11px; padding: 2px 8px;" id="emergency-current-date"></span>
+            <div class="emergency-controls">
+                <div class="emergency-controls-inner">
+                    <span class="emergency-label">Emergency Controls:</span>
+                    <div class="emergency-buttons">
+                        <button class="emergency-btn emergency-undo" id="emergency-undo-btn">🔄 UNDO</button>
+                        <button class="emergency-btn emergency-refresh" id="emergency-refresh-btn">🔄 Refresh</button>
+                        <button class="emergency-btn emergency-test" id="emergency-sample-data-btn">📋 Test Data</button>
+                        <span class="emergency-date" id="emergency-current-date"></span>
                     </div>
                 </div>
             </div>
@@ -277,7 +331,84 @@
         </div>
     </div>
 
+    <!-- Rate Management Modal -->
+    <div id="rate-management-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="rate-modal-title">Rate Management</h3>
+                <button class="modal-close" id="rate-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rate-management-container">
+                    <!-- Financial Year Selector -->
+                    <div class="rate-controls">
+                        <div class="rate-year-selector">
+                            <label for="financial-year">Financial Year:</label>
+                            <select id="financial-year" class="rate-select">
+                                <option value="2024-2025">2024-2025 (Apr 1, 2024 - Mar 31, 2025)</option>
+                                <option value="2025-2026">2025-2026 (Apr 1, 2025 - Mar 31, 2026)</option>
+                                <option value="2026-2027">2026-2027 (Apr 1, 2026 - Mar 31, 2027)</option>
+                            </select>
+                        </div>
+                        <div class="rate-actions">
+                            <button class="btn-secondary" id="copy-previous-year">📋 Copy from Previous Year</button>
+                            <button class="btn-secondary" id="bulk-increase">📈 Bulk Increase</button>
+                            <button class="btn-primary" id="import-rates">📁 Import</button>
+                            <button class="btn-primary" id="export-rates">💾 Export</button>
+                        </div>
+                    </div>
+
+                    <!-- Rate Matrix -->
+                    <div class="rate-matrix">
+                        <h4>Rate Matrix (RRP Rates)</h4>
+                        <div class="rate-table-container">
+                            <table class="rate-table" id="rate-table">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Route</th>
+                                        <th colspan="6">Passengers</th>
+                                    </tr>
+                                    <tr>
+                                        <th>1</th>
+                                        <th>2</th>
+                                        <th>3</th>
+                                        <th>4</th>
+                                        <th>5</th>
+                                        <th>6+</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rate-table-body">
+                                    <!-- Rate rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Rate Templates -->
+                    <div class="rate-templates">
+                        <h4>Rate Templates</h4>
+                        <div class="template-actions">
+                            <button class="btn-secondary" id="save-template">💾 Save as Template</button>
+                            <button class="btn-secondary" id="load-template">📁 Load Template</button>
+                            <select id="template-selector" class="rate-select">
+                                <option value="">Choose template...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="rate-modal-cancel">Cancel</button>
+                <button class="btn-primary" id="save-rates">💰 Save Rates</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export File Input -->
+    <input type="file" id="rate-file-input" accept=".json,.csv" style="display: none;">
+
     <script src="navigation.js"></script>
     <script src="manage-script.js"></script>
+    <script src="rate-management.js"></script>
 </body>
 </html>

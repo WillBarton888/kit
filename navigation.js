@@ -13,7 +13,7 @@ function createNavigation() {
                         📱 Public Booking
                     </a>
                     <a href="staff.html" class="nav-tab ${currentPage === 'staff' ? 'active' : ''}">
-                        👔 Staff Interface
+                        👔 Add Booking
                     </a>
                     <a href="drivers.html" class="nav-tab ${currentPage === 'drivers' ? 'active' : ''}">
                         🚗 Drivers Portal

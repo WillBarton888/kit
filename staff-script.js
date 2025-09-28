@@ -15,24 +15,42 @@ document.addEventListener('DOMContentLoaded', function() {
     setupStaffCustomerLookup();
     setupStaffKeyboardShortcuts();
 
+    // Initialize custom time pickers directly
+    setTimeout(() => {
+        console.log('Initializing custom time pickers for staff page...');
+        initializeStaffTimePickers();
+    }, 100);
+
     function setupStaffFormInteractions() {
         // Trip type change handler
         const tripTypeSelect = document.getElementById('staff-trip-type');
         const returnRow = document.getElementById('staff-return-row');
         const returnDateInput = document.getElementById('staff-return-date');
-        const returnTimeInput = document.getElementById('staff-return-time');
+        const returnTimeInput = document.querySelector('[data-name="returnTime"] .time-value');
 
         tripTypeSelect.addEventListener('change', function() {
             if (this.value === 'return') {
                 returnRow.style.display = 'grid';
                 returnDateInput.setAttribute('required', 'required');
-                returnTimeInput.setAttribute('required', 'required');
+                // For custom time picker, set required on the display input
+                const returnTimeDisplay = document.querySelector('[data-name="returnTime"] .time-display');
+                if (returnTimeDisplay) {
+                    returnTimeDisplay.setAttribute('required', 'required');
+                }
             } else {
                 returnRow.style.display = 'none';
                 returnDateInput.removeAttribute('required');
-                returnTimeInput.removeAttribute('required');
+                // For custom time picker, remove required from display input and clear values
+                const returnTimeDisplay = document.querySelector('[data-name="returnTime"] .time-display');
+                const returnTimeValue = document.querySelector('[data-name="returnTime"] .time-value');
+                if (returnTimeDisplay) {
+                    returnTimeDisplay.removeAttribute('required');
+                    returnTimeDisplay.value = '';
+                }
+                if (returnTimeValue) {
+                    returnTimeValue.value = '';
+                }
                 returnDateInput.value = '';
-                returnTimeInput.value = '';
             }
             calculatePrice();
         });
@@ -884,5 +902,112 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         showMessage('Draft booking loaded ✨', 'success');
         calculatePrice();
+    }
+
+    // Initialize custom time pickers specifically for staff page
+    function initializeStaffTimePickers() {
+        console.log('Setting up time pickers...');
+        const timePickers = document.querySelectorAll('.custom-time-picker');
+        console.log('Found time pickers:', timePickers.length);
+
+        timePickers.forEach(picker => {
+            const displayInput = picker.querySelector('.time-display');
+            const valueInput = picker.querySelector('.time-value');
+            const popup = picker.querySelector('.time-popup');
+            const hourOptions = picker.querySelectorAll('.hours-column .time-option');
+            const minuteOptions = picker.querySelectorAll('.minutes-column .time-option');
+
+            if (!displayInput || !valueInput || !popup) {
+                console.error('Missing time picker elements:', { displayInput, valueInput, popup });
+                return;
+            }
+
+            let selectedHour = '';
+            let selectedMinute = '';
+
+            // Handle display input click to show popup
+            displayInput.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Time picker clicked');
+                closeAllStaffTimePickerPopups();
+                popup.classList.add('show');
+                displayInput.focus();
+            });
+
+            // Handle display input focus
+            displayInput.addEventListener('focus', function() {
+                console.log('Time picker focused');
+                closeAllStaffTimePickerPopups();
+                popup.classList.add('show');
+            });
+
+            // Handle hour selection
+            hourOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    console.log('Hour selected:', this.dataset.value);
+                    selectedHour = this.dataset.value;
+
+                    // Remove selected class from all hour options
+                    hourOptions.forEach(opt => opt.classList.remove('selected'));
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+
+                    updateTimeDisplay();
+                });
+            });
+
+            // Handle minute selection
+            minuteOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    console.log('Minute selected:', this.dataset.value);
+                    selectedMinute = this.dataset.value;
+
+                    // Remove selected class from all minute options
+                    minuteOptions.forEach(opt => opt.classList.remove('selected'));
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+
+                    updateTimeDisplay();
+                });
+            });
+
+            function updateTimeDisplay() {
+                if (selectedHour && selectedMinute) {
+                    const hour = parseInt(selectedHour);
+                    const minute = selectedMinute;
+                    const period = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+
+                    const timeString = `${displayHour}:${minute} ${period}`;
+                    const valueString = `${selectedHour}:${minute}`;
+
+                    displayInput.value = timeString;
+                    valueInput.value = valueString;
+
+                    console.log('Time updated:', timeString, valueString);
+
+                    // Close popup after selection
+                    setTimeout(() => {
+                        popup.classList.remove('show');
+                    }, 200);
+
+                    // Trigger change event for form validation
+                    const changeEvent = new Event('change', { bubbles: true });
+                    valueInput.dispatchEvent(changeEvent);
+                }
+            }
+        });
+
+        // Close popups when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-time-picker')) {
+                closeAllStaffTimePickerPopups();
+            }
+        });
+
+        function closeAllStaffTimePickerPopups() {
+            const allPopups = document.querySelectorAll('.time-popup');
+            allPopups.forEach(popup => popup.classList.remove('show'));
+        }
     }
 });

@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set up event listeners
     setupEventListeners();
 
+    // Set up navigation
+    setupNavigation();
+
     // Set up Sample Data button event listener
     const sampleDataBtn = document.getElementById('sample-data-btn');
     if (sampleDataBtn) {
@@ -65,8 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const emergencyUndoBtn = document.getElementById('emergency-undo-btn');
     const emergencyRefreshBtn = document.getElementById('emergency-refresh-btn');
     const emergencySampleDataBtn = document.getElementById('emergency-sample-data-btn');
-    const emergencyBackupBtn = document.getElementById('emergency-backup-btn');
-
     if (emergencyUndoBtn) {
         emergencyUndoBtn.onclick = undoLastAction;
         console.log('Emergency undo button event listener set up');
@@ -91,11 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Emergency sample data button event listener set up');
     }
 
-    if (emergencyBackupBtn) {
-        emergencyBackupBtn.onclick = triggerManualBackup;
-        console.log('Emergency backup button event listener set up');
-    }
-
     // Set date in emergency controls
     const emergencyDateElement = document.getElementById('emergency-current-date');
     if (emergencyDateElement) {
@@ -107,60 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Set up backup reminders (every 30 minutes)
-    setupBackupReminders();
 });
 
-// Backup reminder system
-function setupBackupReminders() {
-    const BACKUP_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
-    let lastBackupReminder = localStorage.getItem('lastBackupReminder');
-
-    if (!lastBackupReminder) {
-        lastBackupReminder = Date.now();
-        localStorage.setItem('lastBackupReminder', lastBackupReminder);
-    }
-
-    // Check if 30 minutes have passed since last reminder
-    const timeSinceLastReminder = Date.now() - parseInt(lastBackupReminder);
-
-    if (timeSinceLastReminder >= BACKUP_INTERVAL) {
-        showBackupReminder();
-    }
-
-    // Set up interval to check every 5 minutes
-    setInterval(() => {
-        const lastReminder = parseInt(localStorage.getItem('lastBackupReminder') || '0');
-        const timeSince = Date.now() - lastReminder;
-
-        if (timeSince >= BACKUP_INTERVAL) {
-            showBackupReminder();
-        }
-    }, 5 * 60 * 1000); // Check every 5 minutes
-}
-
-function showBackupReminder() {
-    const shouldRemind = confirm('🔄 BACKUP REMINDER\n\nIt\'s been 30+ minutes since your last backup reminder.\n\nWould you like to commit your changes to git now?\n\nClick OK to be reminded again in 30 minutes, or Cancel to skip this reminder.');
-
-    if (shouldRemind) {
-        alert('💾 To backup your work:\n\n1. Open a terminal/command prompt\n2. Run: git add .\n3. Run: git commit -m "Your backup message"\n\nYour changes will be safely saved to git history!');
-    }
-
-    // Update the last reminder time regardless of choice
-    localStorage.setItem('lastBackupReminder', Date.now().toString());
-}
-
-// Add manual backup button functionality
-function triggerManualBackup() {
-    const message = prompt('💾 Manual Backup\n\nEnter a description for this backup:', 'Work in progress backup');
-
-    if (message) {
-        alert(`To complete the backup:\n\n1. Open terminal/command prompt\n2. Run: git add .\n3. Run: git commit -m "${message}"\n\nRemember: Claude can help you run these commands if needed!`);
-
-        // Reset backup reminder timer
-        localStorage.setItem('lastBackupReminder', Date.now().toString());
-    }
-}
+// Backup reminder system removed
 
 // Global data storage
 let bookings = [];
@@ -3612,3 +3557,191 @@ window.viewImmediateTaxInvoiceForSingleBooking = viewImmediateTaxInvoiceForSingl
 window.loadSampleData = loadSampleData;
 window.undoLastAction = undoLastAction;
 window.clearActionHistory = clearActionHistory;
+
+// Navigation functionality
+function setupNavigation() {
+    // Handle navigation item clicks
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+
+            // Handle admin expansion
+            if (section === 'admin') {
+                const submenu = document.querySelector('.nav-submenu[data-parent="admin"]');
+                const arrow = this.querySelector('.nav-arrow');
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    this.classList.remove('expanded');
+                } else {
+                    submenu.classList.add('open');
+                    this.classList.add('expanded');
+                }
+                return;
+            }
+
+            // Handle navigation
+            handleNavigation(section);
+        });
+    });
+
+    // Handle submenu item clicks
+    const subItems = document.querySelectorAll('.nav-subitem');
+    subItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+            handleNavigation(section);
+        });
+    });
+
+    // Set initial active state (reservations)
+    setActiveNavItem('reservations');
+}
+
+function handleNavigation(section) {
+    // Clear previous active states
+    document.querySelectorAll('.nav-item, .nav-subitem').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    // Set active state
+    setActiveNavItem(section);
+
+    // Handle different sections
+    switch(section) {
+        case 'reservations':
+            showReservationsSection();
+            break;
+        case 'shuttle-bookings':
+            showShuttleBookingsSection();
+            break;
+        case 'calendar':
+            showCalendarSection();
+            break;
+        case 'invoicing':
+            showInvoicingSection();
+            break;
+        case 'driver-portal':
+            showDriverPortalSection();
+            break;
+        case 'accounts':
+            showAccountsSection();
+            break;
+        case 'customers':
+            showCustomersSection();
+            break;
+        case 'agents':
+            showAgentsSection();
+            break;
+        case 'rates':
+            showRatesSection();
+            break;
+        case 'locations':
+            showLocationsSection();
+            break;
+        case 'vehicles':
+            showVehiclesSection();
+            break;
+        case 'exception-dates':
+            showExceptionDatesSection();
+            break;
+        default:
+            console.log('Unknown section:', section);
+    }
+}
+
+function setActiveNavItem(section) {
+    const navItem = document.querySelector(`[data-section="${section}"]`);
+    if (navItem) {
+        navItem.classList.add('active');
+
+        // If it's a submenu item, also expand the parent
+        if (navItem.classList.contains('nav-subitem')) {
+            const adminItem = document.querySelector('[data-section="admin"]');
+            const submenu = document.querySelector('.nav-submenu[data-parent="admin"]');
+            if (adminItem && submenu) {
+                adminItem.classList.add('expanded');
+                submenu.classList.add('open');
+            }
+        }
+    }
+}
+
+// Section display functions
+function showReservationsSection() {
+    // This is the default view - show the current booking list
+    console.log('Showing Reservations section');
+    // Current booking management is already displayed
+}
+
+function showShuttleBookingsSection() {
+    console.log('Showing Shuttle Bookings section');
+    // Could filter to only shuttle type bookings
+    alert('Shuttle Bookings section - filtering functionality to be implemented');
+}
+
+function showCalendarSection() {
+    console.log('Showing Calendar section');
+    // Switch to schedule view
+    const scheduleBtn = document.getElementById('schedule-view-btn');
+    if (scheduleBtn) {
+        scheduleBtn.click();
+    }
+    alert('Calendar section - enhanced calendar view to be implemented');
+}
+
+function showInvoicingSection() {
+    console.log('Showing Invoicing section');
+    alert('Invoicing section - dedicated invoicing interface to be implemented');
+}
+
+function showDriverPortalSection() {
+    console.log('Showing Driver Portal section');
+    // Open driver portal in new tab
+    window.open('staff.html', '_blank');
+}
+
+function showAccountsSection() {
+    console.log('Showing Accounts section');
+    alert('Accounts section - account management interface to be implemented');
+}
+
+function showCustomersSection() {
+    console.log('Showing Customers section');
+    alert('Customers section - customer management interface to be implemented');
+}
+
+function showAgentsSection() {
+    console.log('Showing Agents section');
+    alert('Agents section - agent management interface to be implemented');
+}
+
+function showRatesSection() {
+    console.log('Showing Rates section');
+    // Open rates management modal
+    const ratesBtn = document.getElementById('manage-rates-btn');
+    if (ratesBtn) {
+        ratesBtn.click();
+    }
+}
+
+function showLocationsSection() {
+    console.log('Showing Locations section');
+    alert('Locations section - pickup/dropoff location management to be implemented');
+}
+
+function showVehiclesSection() {
+    console.log('Showing Vehicles section');
+    // Switch to vehicles tab in resource panel
+    const vehiclesTab = document.getElementById('vehicles-tab');
+    if (vehiclesTab) {
+        vehiclesTab.click();
+    }
+    alert('Vehicles section - dedicated vehicle management interface to be implemented');
+}
+
+function showExceptionDatesSection() {
+    console.log('Showing Exception Dates section');
+    alert('Exception Dates section - holiday/exception date management to be implemented');
+}
